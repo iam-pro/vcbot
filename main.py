@@ -6,7 +6,12 @@ from funcs import *
 
 ydl_opts = {"format": "bestaudio", "no-playlist": True}
 ydl = youtube_dl.YoutubeDL(ydl_opts)
-
+vc = GroupCall(
+    client=user,
+    input_filename=f"input{m.chat.id}.raw",
+    play_on_repeat=False,
+    enable_logs_to_console=True,
+)
 def transcode(filename: str, chat_id: str):
     ffmpeg.input(filename).output(
         f"input{chat_id}.raw",
@@ -28,12 +33,7 @@ def download(idd, chat_id):
 @bot.on_message(filters.command("joinvc") & filters.user(AuthUsers))
 async def joinvc(_, m):
     try:
-        vc = GroupCall(
-            client=user,
-            input_filename=f"input{m.chat.id}.raw",
-            play_on_repeat=False,
-            enable_logs_to_console=True,
-        )
+
         if vc.is_connected:
             try:
                 await m.reply_text("Already in Voice Chat!", quote=True)
@@ -67,5 +67,7 @@ async def playvc(_, m):
     msg = f"Playing {title} !"
     await m.reply(msg)
 
-bot.run()
-user.run()
+bot.start()
+user.start()
+bot.idle()
+user.idle()
