@@ -4,7 +4,6 @@ from pyrogram import idle
 from client import *
 from funcs import *
 
-
 ydl_opts = {"format": "bestaudio", "no-playlist": True}
 ydl = youtube_dl.YoutubeDL(ydl_opts)
 vc = PyTgCalls(user, log_mode=PyLogs.verbose)
