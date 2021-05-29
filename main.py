@@ -1,5 +1,5 @@
 import traceback, ffmpeg
-from pytgcalls import PyTgCalls, PyLogs
+from pytgcalls import PyTgCalls, PyLogs, StreamType
 from pyrogram import idle
 from client import *
 from multiprocessing import Process
