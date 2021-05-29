@@ -9,7 +9,7 @@ ydl_opts = {"format": "bestaudio"}
 ydl = youtube_dl.YoutubeDL(ydl_opts)
 vc = PyTgCalls(user, log_mode=PyLogs.verbose)
 
-def transcode(filename: str, chat_id: str):
+def transcode(filename: str, chat_id: int):
     ffmpeg.input(filename).output(
         f"input{chat_id}.raw",
         format="s16le",
