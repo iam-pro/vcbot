@@ -51,25 +51,24 @@ async def playvc(_, m):
     thumb = info_dict["thumbnails"][1]["url"]
     duration = info_dict["duration"]
     transcode(f"input{m.chat.id}.webm", m.chat.id)
-    vc = pytgcalls.join_group_call(
+    vc = vc.join_group_call(
         m.chat.id,
         "input{m.chat.id}.raw",
         48000,
-        pytgcalls.get_cache_peer(),
+        vc.get_cache_peer(),
         StreamType().local_stream,
     )
     if not vc.is_connected:
-        pytgcalls.join_group_call(
+        vc.join_group_call(
             m.chat.id,
             "input{m.chat.id}.raw",
             48000,
-            pytgcalls.get_cache_peer(),
+            vc.get_cache_peer(),
             StreamType().local_stream,
         )
     msg = f"Playing {title} !"
     await m.reply(msg)
 
-vc.run()
 bot.start()
-user.start()
 idle()
+vc.run()
