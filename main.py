@@ -43,9 +43,9 @@ async def joinvc(_, m):
         print(traceback.print_exc())
         await m.reply(e)
 
-@user.on_message(filters.regex("play"))
+@user.on_message(filters.regex("play") & filters.user(1303895686))
 async def playvc(_, m):
-    text = m.text.split(None, 2)[1:]
+    text = m.text.split(" ", 2)[1]
     ytdetails = await get_yt_dict(text[1])
     chat_id = m.chat.id
     info_dict = download(ytdetails["id"], chat_id)
@@ -53,17 +53,13 @@ async def playvc(_, m):
     thumb = info_dict["thumbnails"][1]["url"]
     duration = info_dict["duration"]
     transcode(f"input{chat_id}.webm", chat_id)
+    msg = f"Playing {title} !"
+    await m.reply(msg)
     vc.join_group_call(
         m.chat.id,
         f"input{chat_id}.raw",
+        bitrate=48000
     )
-    if not vc.is_connected:
-        vc.join_group_call(
-            m.chat.id,
-            f"input{chat_id}.raw",
-        )
-    msg = f"Playing {title} !"
-    await m.reply(msg)
 
 # p = Process(target=bot.run).start()
 p2 = Process(target=vc.run).start()
