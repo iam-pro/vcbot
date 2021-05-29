@@ -14,7 +14,7 @@ def transcode(filename: str, chat_id: int):
         f"input{chat_id}.raw",
         format="s16le",
         acodec="pcm_s16le",
-        ac=2,
+        ac=1,
         ar="48k",
         loglevel="error",
     ).overwrite_output().run()
