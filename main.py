@@ -1,5 +1,5 @@
 import traceback, ffmpeg
-from pytgcalls import GroupCall
+from pytgcalls import PyTgCalls
 from pyrogram import idle
 from client import *
 from funcs import *
@@ -7,12 +7,8 @@ from funcs import *
 
 ydl_opts = {"format": "bestaudio", "no-playlist": True}
 ydl = youtube_dl.YoutubeDL(ydl_opts)
-vc = GroupCall(
-    client=user,
-    input_filename=f"input.raw",
-    play_on_repeat=False,
-    enable_logs_to_console=True,
-)
+vc = PyTgCalls(user, log_mode=PyLogs.verbose)
+
 def transcode(filename: str, chat_id: str):
     ffmpeg.input(filename).output(
         f"input{chat_id}.raw",
@@ -34,13 +30,13 @@ def download(idd, chat_id):
 @bot.on_message(filters.regex("joinvc"))
 async def joinvc(_, m):
     try:
-        if vc.is_connected:
+        if m.chat.id in vc.active_calls:
             try:
                 await m.reply_text("Already in Voice Chat!", quote=True)
             except:
                 await bot.send_message(m.chat.id, "Already in Voice Chat!")
             return
-        await vc.start(m.chat.id)
+        await vc.join_group_call(m.chat.id, f"input{m.chat.id}.raw", 48000, vc.get_cache_peer(), StreamType().local_stream,)
         await m.reply_text("Joined The Voice Chat!", quote=True)
 
     except Exception as e:
@@ -56,17 +52,22 @@ async def playvc(_, m):
     thumb = info_dict["thumbnails"][1]["url"]
     duration = info_dict["duration"]
     transcode(f"input{m.chat.id}.webm", m.chat.id)
-    vc = GroupCall(
-        client=user,
-        input_filename=f"input{m.chat.id}.raw",
-        play_on_repeat=False,
-        enable_logs_to_console=False,
+    vc = pytgcalls.join_group_call(
+        m.chat.id,
+        "input{m.chat.id}.raw",
+        48000,
+        pytgcalls.get_cache_peer(),
+        StreamType().local_stream,
     )
     if not vc.is_connected:
-        await vc.start(m.chat.id)
+        pytgcalls.join_group_call(
+            m.chat.id,
+            "input{m.chat.id}.raw",
+            48000,
+            pytgcalls.get_cache_peer(),
+            StreamType().local_stream,
+        )
     msg = f"Playing {title} !"
     await m.reply(msg)
 
-bot.start()
-user.start()
-idle()
+pytgcalls.run()
