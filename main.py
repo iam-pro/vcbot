@@ -59,6 +59,7 @@ async def playvc(_, m):
     if not vc.is_connected:
         await vc.start(m.chat.id)
     msg = f"Playing {title} !"
+    await m.reply(msg)
 
 bot.run()
 user.run()
