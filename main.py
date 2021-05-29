@@ -49,6 +49,7 @@ async def playvc(_, m):
     title = info_dict["title"]
     thumb = info_dict["thumbnails"][1]["url"]
     duration = info_dict["duration"]
+    transcode(f"input{m.chat.id}.webm", m.chat.id)
     vc = GroupCall(
         client=user,
         input_filename=f"input{m.chat.id}.raw",
