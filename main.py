@@ -45,7 +45,7 @@ async def playvc(_, m):
     title = info_dict["title"]
     thumb = info_dict["thumbnails"][1]["url"]
     duration = info_dict["duration"]
-    transcode(f"input{chat_id}.webm", chat_id)
+    await transcode(f"input{chat_id}.webm", chat_id)
     msg = f"Playing {title} !"
     vc.join_group_call(
         m.chat.id,
