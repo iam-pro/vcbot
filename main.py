@@ -54,5 +54,5 @@ async def playvc(_, m):
         bitrate=48000
     )
 
-# p = Process(target=bot.run).start()
+p = Process(target=bot.run).start()
 p2 = Process(target=vc.run).start()
