@@ -69,4 +69,4 @@ async def playvc(_, m):
     msg = f"Playing {title} !"
     await m.reply(msg)
 
-pytgcalls.run()
+vc.run()
