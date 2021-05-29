@@ -5,7 +5,7 @@ from client import *
 from multiprocessing import Process
 from funcs import *
 
-ydl_opts = {"format": "bestaudio", "no-playlist": True}
+ydl_opts = {"format": "bestaudio"}
 ydl = youtube_dl.YoutubeDL(ydl_opts)
 vc = PyTgCalls(user, log_mode=PyLogs.verbose)
 
