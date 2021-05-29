@@ -6,5 +6,5 @@ ydl = youtube_dl.YoutubeDL(ydl_opts)
 
 async def get_yt_dict(query):
   omk = YoutubeSearch(query, max_results=1).to_json()
-  yt = omk["result"][0]
+  yt = omk[0]
   return yt
