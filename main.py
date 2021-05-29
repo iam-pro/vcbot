@@ -1,4 +1,5 @@
 import traceback, ffmpeg
+import asyncio
 from pytgcalls import PyTgCalls, PyLogs, StreamType
 from pyrogram import idle
 from client import *
@@ -9,15 +10,12 @@ ydl_opts = {"format": "bestaudio"}
 ydl = youtube_dl.YoutubeDL(ydl_opts)
 vc = PyTgCalls(user, log_mode=PyLogs.ultra_verbose)
 queue = []
-def transcode(filename: str, chat_id: int):
-    ffmpeg.input(filename).output(
-        f"input{chat_id}.raw",
-        format="s16le",
-        acodec="pcm_s16le",
-        ac=1,
-        ar="48k",
-        loglevel="error",
-    ).overwrite_output().run()
+async def transcode(filename: str, chat_id: int):
+    out = f"input{chat_id}.raw"
+    omk = await asyncio.create_subprocess_shell(f"ffmpeg -y -i {filename} -f s16le -ac 1 -ar 48000 -acodec pcm_s16le {out}",
+        asyncio.subprocess.PIPE,
+        stderr=asyncio.subprocess.PIPE
+    )
     os.remove(filename)
 
 def download(idd, chat_id):
