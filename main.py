@@ -70,3 +70,6 @@ async def playvc(_, m):
     await m.reply(msg)
 
 vc.run()
+bot.start()
+user.start()
+idle()
