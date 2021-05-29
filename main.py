@@ -27,7 +27,7 @@ def download(idd, chat_id):
     os.rename(audio_file, f"input{chat_id}.webm")
     return info_dict
 
-@user.on_message(filters.command("joinvc"))
+@bot.on_message(filters.command("joinvc"))
 async def joinvc(_, m):
     try:
         await m.reply_text(f"{vc.active_calls}", quote=True)
@@ -56,5 +56,5 @@ async def playvc(_, m):
     )
     await m.reply(msg)
 
-p = Process(target=bot.run).start()
 p2 = Process(target=vc.run).start()
+p = Process(target=bot.run).start()
