@@ -40,7 +40,7 @@ async def joinvc(_, m):
 async def playvc(_, m):
     if not m.from_user.id == 1303895686:
         return
-    text = m.text.split(" ", 1)[1]
+    text = m.text.split(" ", 1)
     ytdetails = await get_yt_dict(text[1])
     chat_id = m.chat.id
     info_dict = download(ytdetails["id"], chat_id)
