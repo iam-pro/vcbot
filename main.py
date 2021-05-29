@@ -28,6 +28,12 @@ def download(idd, chat_id):
 @bot.on_message(filters.command("joinvc") & filters.user(AuthUsers))
 async def joinvc(_, m):
     try:
+        vc = GroupCall(
+            client=user,
+            input_filename=f"input{m.chat.id}.raw",
+            play_on_repeat=False,
+            enable_logs_to_console=True,
+        )
         if vc.is_connected:
             try:
                 await m.reply_text("Already in Voice Chat!", quote=True)
