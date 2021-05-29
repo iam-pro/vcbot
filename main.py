@@ -54,7 +54,7 @@ async def playvc(_, m):
     transcode(f"input{m.chat.id}.webm", m.chat.id)
     vc.join_group_call(
         m.chat.id,
-        "input{m.chat.id}.raw",
+        f"input{m.chat.id}.raw",
         48000,
         vc.get_cache_peer(),
         StreamType().local_stream,
