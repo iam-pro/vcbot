@@ -1,4 +1,12 @@
 {
     "name": "VCBOT",
+    "description": "MC",
+    "repository": "https://github.com/iam-pro/vcbot",
     "stack": "container",
+    "env": {
+        "Die": {
+            "description": "You api id, from my.telegram.org or @ScrapperRoBot.",
+            "required": false
+        }
+    }
 }
