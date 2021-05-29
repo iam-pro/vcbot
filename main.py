@@ -47,14 +47,15 @@ async def joinvc(_, m):
 async def playvc(_, m):
     text = m.text.split(None, 2)[1:]
     ytdetails = await get_yt_dict(text[1])
-    info_dict = download(ytdetails["id"], m.chat.id)
+    chat_id = m.chat.id
+    info_dict = download(ytdetails["id"], chat_id)
     title = info_dict["title"]
     thumb = info_dict["thumbnails"][1]["url"]
     duration = info_dict["duration"]
-    transcode(f"input{m.chat.id}.webm", m.chat.id)
+    transcode(f"input{chat_id}.webm", chat_id)
     vc.join_group_call(
         m.chat.id,
-        f"input{m.chat.id}.raw",
+        f"input{chat_id}.raw",
         48000,
         vc.get_cache_peer(),
         StreamType().local_stream,
@@ -62,7 +63,7 @@ async def playvc(_, m):
     if not vc.is_connected:
         vc.join_group_call(
             m.chat.id,
-            f"input{m.chat.id}.raw",
+            f"input{chat_id}.raw",
             48000,
             vc.get_cache_peer(),
             StreamType().local_stream,
