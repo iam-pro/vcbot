@@ -62,7 +62,7 @@ async def playvc(_, m):
     if not vc.is_connected:
         vc.join_group_call(
             m.chat.id,
-            "input{m.chat.id}.raw",
+            f"input{m.chat.id}.raw",
             48000,
             vc.get_cache_peer(),
             StreamType().local_stream,
