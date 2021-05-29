@@ -8,7 +8,7 @@ ydl_opts = {"format": "bestaudio", "no-playlist": True}
 ydl = youtube_dl.YoutubeDL(ydl_opts)
 vc = GroupCall(
     client=user,
-    input_filename=f"input{m.chat.id}.raw",
+    input_filename=f"input.raw",
     play_on_repeat=False,
     enable_logs_to_console=True,
 )
