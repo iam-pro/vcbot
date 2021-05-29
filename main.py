@@ -7,7 +7,7 @@ from funcs import *
 
 ydl_opts = {"format": "bestaudio"}
 ydl = youtube_dl.YoutubeDL(ydl_opts)
-vc = PyTgCalls(user, log_mode=PyLogs.verbose)
+vc = PyTgCalls(user, log_mode=PyLogs.ultra_verbose)
 queue = []
 def transcode(filename: str, chat_id: int):
     ffmpeg.input(filename).output(
@@ -56,6 +56,6 @@ async def playvc(_, m):
     )
     await m.reply(msg)
 
-
-p = Process(target=bot.run).start()
+bot.start()
+p = Process(target=idle).start()
 vc.run()
