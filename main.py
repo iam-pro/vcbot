@@ -1,5 +1,6 @@
 import traceback, ffmpeg
 from pytgcalls import GroupCall
+from pyrogram import idle
 from client import *
 from funcs import *
 
@@ -69,5 +70,4 @@ async def playvc(_, m):
 
 bot.start()
 user.start()
-bot.idle()
-user.idle()
+idle()
