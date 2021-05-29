@@ -1,6 +1,6 @@
 import traceback, ffmpeg
 from pytgcalls import GroupCall
-from client import bot, user
+from client import *
 from funcs import *
 
 
@@ -58,4 +58,6 @@ async def playvc(_, m):
     if not vc.is_connected:
         await vc.start(m.chat.id)
     msg = f"Playing {title} !"
-    
+
+bot.run()
+user.run()
