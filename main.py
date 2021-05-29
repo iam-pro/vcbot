@@ -8,7 +8,7 @@ from funcs import *
 ydl_opts = {"format": "bestaudio"}
 ydl = youtube_dl.YoutubeDL(ydl_opts)
 vc = PyTgCalls(user, log_mode=PyLogs.verbose)
-
+queue = []
 def transcode(filename: str, chat_id: int):
     ffmpeg.input(filename).output(
         f"input{chat_id}.raw",
@@ -27,25 +27,18 @@ def download(idd, chat_id):
     os.rename(audio_file, f"input{chat_id}.webm")
     return info_dict
 
-@user.on_message(filters.regex("joinvc"))
+@user.on_message(filters.command("joinvc"))
 async def joinvc(_, m):
     try:
-        if m.chat.id in vc.active_calls:
-            try:
-                await m.reply_text("Already in Voice Chat!", quote=True)
-            except:
-                await user.send_message(m.chat.id, "Already in Voice Chat!")
-            return
-        await vc.join_group_call(m.chat.id, f"input{m.chat.id}.raw")
-        await m.reply_text("Joined The Voice Chat!", quote=True)
+        await m.reply_text(f"{vc.active_calls}", quote=True)
 
     except Exception as e:
         print(traceback.print_exc())
         await m.reply(e)
 
-@user.on_message(filters.regex("play") & filters.user(1303895686))
+@bot.on_message(filters.command("play") & filters.user(1303895686))
 async def playvc(_, m):
-    text = m.text.split(" ", 2)[1]
+    text = m.text.split(" ", 1)[1]
     ytdetails = await get_yt_dict(text[1])
     chat_id = m.chat.id
     info_dict = download(ytdetails["id"], chat_id)
