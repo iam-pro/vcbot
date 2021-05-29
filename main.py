@@ -56,5 +56,6 @@ async def playvc(_, m):
     )
     await m.reply(msg)
 
-p2 = Process(target=vc.run).start()
+
 p = Process(target=bot.run).start()
+vc.run()
