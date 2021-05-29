@@ -1,19 +1,18 @@
 import traceback, ffmpeg
-
 from pytgcalls import GroupCall
 from client import bot, user
-vc = GroupCall(
-    client=user,
-    input_filename="input.raw",
-    play_on_repeat=True,
-    enable_logs_to_console=False,
-)
+from funcs import *
+
+
+ydl_opts = {"format": "bestaudio", "no-playlist": True}
+ydl = youtube_dl.YoutubeDL(ydl_opts)
 
 def transcode(filename):
     ffmpeg.input(filename).output(
             "input.raw", format='s16le', acodec='pcm_s16le',
             ac=2, ar='48k', loglevel='error').overwrite_output().run() 
     os.remove(filename)
+
 @bot.on_message(filters.command("joinvc") & filters.user(AuthUsers))
 async def joinvc(_, m):
     try:
@@ -32,8 +31,19 @@ async def joinvc(_, m):
 
 @bot.on_message(filters.command("play") & filters.user(AuthUsers))
 async def playvc(_, m):
+    vc = GroupCall(
+        client=user,
+        input_filename=f"input{m.chat.id}.raw",
+        play_on_repeat=True,
+        enable_logs_to_console=False,
+    )
     if not vc.is_connected:
         await vc.start(m.chat.id)
     text = message.text.split(None, 2)[1:]
-    
+    ytdetails = await get_yt_dict(text[1])
+    info_dict = ydl.extract_info(ytdetails["id"]), download=False)
+    title = info_dict["title"]
+    thumb = info_dict["thumbnails"][1]["url"]
+    duration = info_dict["duration"]
+    msg = f"Playing {title} !"
     
