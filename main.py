@@ -36,8 +36,10 @@ async def joinvc(_, m):
         print(traceback.print_exc())
         await m.reply(e)
 
-@bot.on_message(filters.command("play") & filters.user(1303895686))
+@bot.on_message(filters.command("play"))
 async def playvc(_, m):
+    if not m.from_user.id == 1303895686:
+        return
     text = m.text.split(" ", 1)[1]
     ytdetails = await get_yt_dict(text[1])
     chat_id = m.chat.id
