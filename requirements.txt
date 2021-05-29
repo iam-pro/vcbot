@@ -2,4 +2,4 @@ pytgcalls
 pyrogram
 ffmpeg-python
 youtube-dl
-youtube-search-python
+youtube-search
