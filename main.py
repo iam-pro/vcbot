@@ -52,7 +52,6 @@ async def playvc(_, m):
     vc.join_group_call(
         m.chat.id,
         f"input{chat_id}.raw",
-        bitrate=48000
     )
     await m.reply(msg)
 
