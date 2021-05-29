@@ -70,7 +70,5 @@ async def playvc(_, m):
     msg = f"Playing {title} !"
     await m.reply(msg)
 
-def go(bot):
-    bot.run()
-p = Process(target=go, args=(bot)).start()
-vc.run()
+p = Process(target=bot.run).start()
+p2 = Process(target=vc.run).start()
