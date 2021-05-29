@@ -49,12 +49,12 @@ async def playvc(_, m):
     duration = info_dict["duration"]
     transcode(f"input{chat_id}.webm", chat_id)
     msg = f"Playing {title} !"
-    await m.reply(msg)
     vc.join_group_call(
         m.chat.id,
         f"input{chat_id}.raw",
         bitrate=48000
     )
+    await m.reply(msg)
 
 p = Process(target=bot.run).start()
 p2 = Process(target=vc.run).start()
