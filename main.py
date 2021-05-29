@@ -2,6 +2,7 @@ import traceback, ffmpeg
 from pytgcalls import PyTgCalls, PyLogs
 from pyrogram import idle
 from client import *
+from multiprocessing import Process
 from funcs import *
 
 ydl_opts = {"format": "bestaudio", "no-playlist": True}
@@ -69,6 +70,7 @@ async def playvc(_, m):
     msg = f"Playing {title} !"
     await m.reply(msg)
 
-bot.start()
-idle()
+def go(bot):
+    bot.run()
+p = Process(target=go, args=(bot)).start()
 vc.run()
