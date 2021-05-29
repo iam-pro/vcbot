@@ -34,7 +34,6 @@ def download(idd, chat_id):
 @bot.on_message(filters.regex("joinvc"))
 async def joinvc(_, m):
     try:
-
         if vc.is_connected:
             try:
                 await m.reply_text("Already in Voice Chat!", quote=True)
