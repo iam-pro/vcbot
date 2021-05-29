@@ -50,7 +50,7 @@ async def joinvc(_, m):
 
 @bot.on_message(filters.regex("play"))
 async def playvc(_, m):
-    text = message.text.split(None, 2)[1:]
+    text = m.text.split(None, 2)[1:]
     ytdetails = await get_yt_dict(text[1])
     info_dict = download(ytdetails["id"], m.chat.id)
     title = info_dict["title"]
