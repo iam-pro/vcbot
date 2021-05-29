@@ -10,13 +10,12 @@ ydl_opts = {"format": "bestaudio"}
 ydl = youtube_dl.YoutubeDL(ydl_opts)
 vc = PyTgCalls(user, log_mode=PyLogs.ultra_verbose)
 queue = []
-async def transcode(filename: str, chat_id: int):
-    out = f"./input{chat_id}.raw"
-    omk = await asyncio.create_subprocess_shell(f"ffmpeg -y -i {filename} -f s16le -ac 1 -ar 48000 -acodec pcm_s16le {out}",
+async def transcode(query: str, chat_id: int):
+    out = f"input{chat_id}.raw"
+    omk = await asyncio.create_subprocess_shell(f"""ffmpeg -y -i "$(youtube-dl -x -g "{query}")" -f s16le -ac 1 -ar 48000 -acodec pcm_s16le {out}""",
         asyncio.subprocess.PIPE,
         stderr=asyncio.subprocess.PIPE
     )
-    os.remove(filename)
 
 def download(idd, chat_id):
     info_dict = ydl.extract_info(idd, download=False)
@@ -45,7 +44,7 @@ async def playvc(_, m):
     title = info_dict["title"]
     thumb = info_dict["thumbnails"][1]["url"]
     duration = info_dict["duration"]
-    await transcode(f"input{chat_id}.webm", chat_id)
+    await transcode(info_dict["webpage_url"], chat_id)
     msg = f"Playing {title} !"
     vc.join_group_call(
         m.chat.id,
