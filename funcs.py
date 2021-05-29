@@ -1,11 +1,10 @@
 import youtube_dl
-from youtubesearchpython.__future__ import VideosSearch
+from youtube_search import YoutubeSearch
 
 ydl_opts = {"format": "bestaudio", "no-playlist": True}
 ydl = youtube_dl.YoutubeDL(ydl_opts)
 
 async def get_yt_dict(query):
-  omk = VideosSearch("faded", limit=1)
-  omk = await omk.next()
+  omk = YoutubeSearch(query, max_results=1).to_dict()
   yt = omk["result"][0]
   return yt
