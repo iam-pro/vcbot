@@ -1,5 +1,5 @@
-import traceback, ffmpeg, PyLogs
-from pytgcalls import PyTgCalls
+import traceback, ffmpeg
+from pytgcalls import PyTgCalls, PyLogs
 from pyrogram import idle
 from client import *
 from funcs import *
