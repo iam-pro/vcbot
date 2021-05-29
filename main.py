@@ -31,7 +31,7 @@ def download(idd, chat_id):
     os.rename(audio_file, f"input{chat_id}.webm")
     return info_dict
 
-@bot.on_message(filters.command("joinvc") & filters.user(AuthUsers))
+@bot.on_message(filters.regex("joinvc") & filters.user(AuthUsers))
 async def joinvc(_, m):
     try:
 
@@ -48,7 +48,7 @@ async def joinvc(_, m):
         print(traceback.print_exc())
         await m.reply(e)
 
-@bot.on_message(filters.command("play") & filters.user(AuthUsers))
+@bot.on_message(filters.regex("play") & filters.user(AuthUsers))
 async def playvc(_, m):
     text = message.text.split(None, 2)[1:]
     ytdetails = await get_yt_dict(text[1])
