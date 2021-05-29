@@ -36,7 +36,7 @@ async def joinvc(_, m):
             except:
                 await user.send_message(m.chat.id, "Already in Voice Chat!")
             return
-        await vc.join_group_call(m.chat.id, f"input{m.chat.id}.raw", 48000, vc.get_cache_peer(), StreamType().local_stream,)
+        await vc.join_group_call(m.chat.id, f"input{m.chat.id}.raw")
         await m.reply_text("Joined The Voice Chat!", quote=True)
 
     except Exception as e:
@@ -56,17 +56,11 @@ async def playvc(_, m):
     vc.join_group_call(
         m.chat.id,
         f"input{chat_id}.raw",
-        48000,
-        vc.get_cache_peer(),
-        StreamType().local_stream,
     )
     if not vc.is_connected:
         vc.join_group_call(
             m.chat.id,
             f"input{chat_id}.raw",
-            48000,
-            vc.get_cache_peer(),
-            StreamType().local_stream,
         )
     msg = f"Playing {title} !"
     await m.reply(msg)
