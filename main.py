@@ -29,7 +29,7 @@ def download(idd, chat_id):
     os.rename(audio_file, f"input{chat_id}.webm")
     return info_dict
 
-@bot.on_message(filters.command("joinvc"))
+@bot.on_message(filters.command("vcs"))
 async def joinvc(_, m):
     try:
         await m.reply_text(f"{vc.active_calls}", quote=True)
@@ -42,21 +42,42 @@ async def joinvc(_, m):
 async def playvc(_, m):
     if not m.from_user.id == 1303895686:
         return
-    text = m.text.split(" ", 1)
-    ytdetails = await get_yt_dict(text[1])
-    chat_id = m.chat.id
-    info_dict = download(ytdetails["id"], chat_id)
+    if m.chat.id in vc.active_calls.keys():
+        text = m.text.split(" ", 1)
+        ytdetails = await get_yt_dict(text[1])
+        chat_id = m.chat.id
+        info_dict = download(ytdetails["id"], chat_id)
+        title = info_dict["title"]
+        thumb = info_dict["thumbnails"][1]["url"]
+        duration = info_dict["duration"]
+        dl = download(info_dict["webpage_url"], chat_id)
+        transcode(f"input{chat_id}.webm", chat_id)
+        msg = f"Playing {title} !"
+        vc.join_group_call(
+            m.chat.id,
+            f"input{chat_id}.raw",
+        )
+        await m.reply(msg)
+    else:
+        add_to_queue(m.chat.id, text[1], m.from_user.id)
+
+@vc.on_stream_end()
+async def streamhandler(chat_id: int):
+    chat, song, from_user = get_from_queue(chat_id)
+    ytdetails = await get_yt_dict(song)
+    info_dict = download(ytdetails["id"], chat)
     title = info_dict["title"]
     thumb = info_dict["thumbnails"][1]["url"]
     duration = info_dict["duration"]
-    dl = download(info_dict["webpage_url"], chat_id)
-    transcode(f"input{chat_id}.webm", chat_id)
+    transcode(f"input{chat}.webm", chat)
     msg = f"Playing {title} !"
-    vc.join_group_call(
-        m.chat.id,
-        f"input{chat_id}.raw",
-    )
-    await m.reply(msg)
+    vc.change_stream(chat, f"input{chat}.raw")
+    QUEUE[chat_id].pop(pos)
+    msgg = await bot.send_message(f"Playing {song}")
+    if not QUEUE[chat]:
+        QUEUE.pop(chat)
+    await asyncio.sleep(duration + 5)
+    await msgg.delete()
 
 bot.start()
 p = Process(target=idle).start()
