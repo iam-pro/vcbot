@@ -32,6 +32,13 @@ def add_to_queue(chat_id, song_name, from_user):
         )
     return QUEUE[int(chat_id)]
 
+def get_from_queue(chat_id):
+    play_this = list(QUEUE[int(chat_id)].keys())[0]
+    info = QUEUE[int(chat_id)][play_this]
+    title = info["title"]
+    from_user = info["from_user"]
+    return title, from_user, play_this
+
 async def get_yt_dict(query):
   omk = ydl.extract_info(f"ytsearch:{query}", False)
   yt = omk["entries"][0]
