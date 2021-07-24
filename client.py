@@ -3,12 +3,13 @@ import functools
 import os
 import subprocess
 import traceback
+from decouple import config
 
-SESSION = os.getenv("SESSION")
-api_id = os.getenv("api_id")
-api_hash = os.getenv("api_hash")
-bot_token = os.getenv("bot_token")
-AuthUsers = list(os.getenv("AuthUsers"))
+SESSION = config("SESSION")
+api_id = config("api_id")
+api_hash = config("api_hash")
+bot_token = config("bot_token")
+AuthUsers = list(config("AuthUsers"))
 QUEUE = {}
 
 from pyrogram import Client, filters
