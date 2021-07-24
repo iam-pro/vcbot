@@ -85,6 +85,5 @@ async def streamhandler(chat_id: int):
     await asyncio.sleep(duration + 5)
     await msgg.delete()
 
-bot.start()
-p = Process(target=idle).start()
+p = Process(target=bot.run).start()
 vc.run()
