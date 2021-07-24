@@ -40,7 +40,7 @@ async def joinvc(_, m):
 
 @bot.on_message(filters.command("play"))
 async def playvc(_, m):
-    if not m.from_user.id == 1303895686:
+    if m.from_user.id not in AuthUsers:
         return
     if m.chat.id in vc.active_calls.keys():
         text = m.text.split(" ", 1)
