@@ -9,6 +9,7 @@ api_id = os.getenv("api_id")
 api_hash = os.getenv("api_hash")
 bot_token = os.getenv("bot_token")
 AuthUsers = list(os.getenv("AuthUsers"))
+QUEUE = {}
 
 from pyrogram import Client, filters
 
