@@ -40,10 +40,10 @@ async def joinvc(_, m):
 
 @bot.on_message(filters.command("play"))
 async def playvc(_, m):
-    if m.from_user.id not in AuthUsers:
-        return
+    text = m.text.split(" ", 1)
+#    if m.from_user.id not in AuthUsers:
+#        return
     if m.chat.id in vc.active_calls.keys():
-        text = m.text.split(" ", 1)
         ytdetails = await get_yt_dict(text[1])
         chat_id = m.chat.id
         info_dict = download(ytdetails["id"], chat_id)
