@@ -43,7 +43,7 @@ async def playvc(_, m):
     text = m.text.split(" ", 1)
 #    if m.from_user.id not in AuthUsers:
 #        return
-    if m.chat.id in vc.active_calls.keys():
+    if m.chat.id not in vc.active_calls.keys():
         ytdetails = await get_yt_dict(text[1])
         chat_id = m.chat.id
         info_dict = download(ytdetails["id"], chat_id)
@@ -60,6 +60,7 @@ async def playvc(_, m):
         await m.reply(msg)
     else:
         add_to_queue(m.chat.id, text[1], m.from_user.id)
+        await m.reply("added to queue")
 
 @vc.on_stream_end()
 async def streamhandler(chat_id: int):
