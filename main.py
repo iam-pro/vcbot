@@ -38,6 +38,11 @@ async def joinvc(_, m):
         print(traceback.print_exc())
         await m.reply(e)
 
+@bot.on_message(filters.command("skip"))
+async def skipvc(_, m):
+    vc.leave_group_call(m.chat.id)
+    await m.reply("skipped")
+
 @bot.on_message(filters.command("play"))
 async def playvc(_, m):
     text = m.text.split(" ", 1)
