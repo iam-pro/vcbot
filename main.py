@@ -1,14 +1,15 @@
 import traceback, ffmpeg
 import asyncio
-from pytgcalls import PyTgCalls, PyLogs, StreamType
-from pyrogram import idle
+from pytgcalls import PyTgCalls, StreamType, idle
+from pytgcalls.types.input_stream import InputAudioStream
+from pytgcalls.types.input_stream import InputStream
 from client import *
 from multiprocessing import Process
 from funcs import *
 
 ydl_opts = {"format": "bestaudio"}
 ydl = youtube_dl.YoutubeDL(ydl_opts)
-vc = PyTgCalls(user, log_mode=PyLogs.ultra_verbose)
+vc = PyTgCalls(user)
 queue = []
 
 def transcode(filename: str, chat_id: int):
@@ -58,9 +59,14 @@ async def playvc(_, m):
         dl = download(info_dict["webpage_url"], chat_id)
         transcode(f"input{chat_id}.webm", chat_id)
         msg = f"Playing {title} !"
-        vc.join_group_call(
+        await vc.join_group_call(
             m.chat.id,
-            f"input{chat_id}.raw",
+            InputStream(
+                InputAudioStream(
+                    f"input{chat_id}.raw",
+                ),
+            ),
+            stream_type=StreamType().local_stream
         )
         await m.reply(msg)
     else:
@@ -77,7 +83,7 @@ async def streamhandler(chat_id: int):
     duration = info_dict["duration"]
     transcode(f"input{chat}.webm", chat)
     msg = f"Playing {title} !"
-    vc.change_stream(chat, f"input{chat}.raw")
+    await vc.change_stream(chat, InputStream(InputAudioStream(f"input{chat}.raw"),),)
     QUEUE[chat_id].pop(pos)
     msgg = await bot.send_message(f"Playing {song}")
     if not QUEUE[chat]:
