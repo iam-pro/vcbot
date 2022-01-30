@@ -1,5 +1,6 @@
 py-tgcalls
 pyrogram
+python-decouple
 ffmpeg-python
 youtube-dl
 youtube-search
