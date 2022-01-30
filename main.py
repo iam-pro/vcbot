@@ -4,9 +4,12 @@ import traceback
 from multiprocessing import Process
 
 import ffmpeg
-from pytgcalls import PyTgCalls, StreamType, idle
+from pytgcalls import idle
+from pytgcalls import PyTgCalls
+from pytgcalls import StreamType
 from pytgcalls.types import Update
-from pytgcalls.types.input_stream import AudioPiped, InputStream
+from pytgcalls.types.input_stream import AudioPiped
+from pytgcalls.types.input_stream import InputStream
 
 from client import *
 from funcs import *
