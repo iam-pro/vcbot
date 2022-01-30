@@ -121,7 +121,7 @@ async def skipvc(_, m):
         duration = (str(xx)[2:])
     else:
         duration = str(xx)
-    await vc.change_stream(m.chat.id, AudioVideoPiped(remote, HighQualityAudio(), HighQualityVideo()))
+    await vc.change_stream(m.chat.id, AudioPiped(remote, HighQualityAudio()))
     QUEUE[m.chat.id].pop(pos)
     await bot.send_photo(m.chat.id, f"https://i.ytimg.com/vi/{ytdetails['id']}/maxresdefault.jpg", caption=f"Playing {title}\nDuration: {duration}")
     await asyncio.sleep(info_dict["duration"] + 5)
@@ -133,7 +133,7 @@ async def ytvc(_, m):
         return
     text = m.text.split(" ", 1)
     remote = await yt_stream(text[1])
-    await vc.join_group_call(m.chat.id, AudioPiped(remote, HighQualityAudio()))
+    await vc.join_group_call(m.chat.id, AudioVideoPiped(remote, HighQualityAudio(), HighQualityVideo()))
     await m.reply_text("Okay")
 
 @bot.on_message(filters.command("play"))
