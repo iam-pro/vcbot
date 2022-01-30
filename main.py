@@ -2,7 +2,7 @@ import traceback, ffmpeg
 import asyncio, datetime
 from pytgcalls import PyTgCalls, StreamType, idle
 from pytgcalls.types import Update
-from pytgcalls.types.input_stream import InputAudioStream
+from pytgcalls.types.input_stream import AudioPiped
 from pytgcalls.types.input_stream import InputStream
 from client import *
 from multiprocessing import Process
@@ -67,12 +67,11 @@ async def skipvc(_, m):
         duration = (str(xx)[2:])
     else:
         duration = str(xx)
-    transcode(f"input{m.chat.id}.webm", m.chat.id)
-    await vc.change_stream(m.chat.id, InputStream(InputAudioStream(f"input{m.chat.id}.raw"),),)
+    await vc.change_stream(m.chat.id, AudioPiped(f"input{m.chat.id}.webm"), stream_type=StreamType().pulse_stream)
     QUEUE[m.chat.id].pop(pos)
     await bot.send_photo(m.chat.id, f"https://i.ytimg.com/vi/{ytdetails['id']}/maxresdefault.jpg", caption=f"Playing {title}\nDuration: {duration}")
     await asyncio.sleep(duration + 5)
-    os.remove(f"input{m.chat.id}.raw")
+    os.remove(f"input{m.chat.id}.webm")
 
 @bot.on_message(filters.command("play"))
 async def playvc(_, m):
@@ -87,23 +86,18 @@ async def playvc(_, m):
         chat_id = m.chat.id
         info_dict = download(ytdetails["id"], chat_id)
         title = info_dict["title"]
-        print(info_dict["thumbnails"])
-        thumb = info_dict["thumbnails"][1]["url"]
+#        print(info_dict["thumbnails"])
+#        thumb = info_dict["thumbnails"][1]["url"]
         xx = datetime.timedelta(seconds=info_dict["duration"])
         if str(xx).startswith("0"):
             duration = (str(xx)[2:])
         else:
             duration = str(xx)
         dl = download(info_dict["webpage_url"], chat_id)
-        transcode(f"input{chat_id}.webm", chat_id)
         await vc.join_group_call(
             m.chat.id,
-            InputStream(
-                InputAudioStream(
-                    f"input{chat_id}.raw",
-                ),
-            ),
-            stream_type=StreamType().local_stream
+            AudioPiped(f"input{m.chat.id}.webm"),
+            stream_type=StreamType().pulse_stream
         )
         await bot.send_photo(m.chat.id, f"https://i.ytimg.com/vi/{ytdetails['id']}/maxresdefault.jpg", caption=f"Playing: `{title}`\nDuration: `{duration}`")
     elif _check == True:
@@ -123,9 +117,8 @@ async def streamhandler(vc: PyTgCalls, update: Update):
         duration = (str(xx)[2:])
     else:
         duration = str(xx)
-    transcode(f"input{update.chat_id}.webm", update.chat_id)
     msg = f"Playing {title} !"
-    await vc.change_stream(update.chat_id, InputStream(InputAudioStream(f"input{update.chat_id}.raw"),),)
+    await vc.change_stream(update.chat_id, AudioPiped(f"input{update.chat_id}.webm"),stream_type=StreamType().pulse_stream)
     QUEUE[update.chat_id].pop(pos)
     await bot.send_photo(update.chat_id, f"https://i.ytimg.com/vi/{ytdetails['id']}/maxresdefault.jpg", caption=f"Playing: `{title}`\nDuration: `{duration}`")
     await asyncio.sleep(info_dict["duration"] + 5)
