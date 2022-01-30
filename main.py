@@ -73,15 +73,12 @@ def check_value(data, val):
     if len(data) > 0:
       for item in data:
           if val in item.values():
-              print("sdasd Yes")
-              return item["is_playing"]
+              is_playing = item["is_playing"]
           else:
-              print("sex")
-              return False
+              is_playing = False
     else:
-      print(len(data))
-      print("Nooooooooo")
-      return False
+      is_playing = False
+    return is_playing
 
 def transcode(filename: str, chat_id: int):
     ffmpeg.input(filename).output(
