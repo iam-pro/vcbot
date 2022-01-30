@@ -6,6 +6,7 @@ from pytgcalls.types.input_stream import AudioPiped, AudioVideoPiped
 from pytgcalls.types.input_stream.quality import HighQualityAudio
 from pytgcalls.types.input_stream.quality import HighQualityVideo
 from pytgcalls.types.input_stream import InputStream
+from pytgcalls.exceptions import AlreadyJoinedError
 from client import *
 from multiprocessing import Process
 from funcs import *
@@ -102,19 +103,24 @@ def download(idd, chat_id):
 
 @bot.on_message(filters.command("vcs"))
 async def joinvc(_, m):
+    if str(m.from_user.id) not in AuthUsers:
+        return
     try:
         await m.reply_text(f"{vc.active_calls}\n\n{QUEUE}", quote=True)
-
     except Exception as e:
         print(traceback.print_exc())
         await m.reply(e)
 
 @bot.on_message(filters.command("stop"))
 async def joinvc(_, m):
+    if str(m.from_user.id) not in AuthUsers:
+        return
     await vc.leave_group_call(m.chat.id)
 
 @bot.on_message(filters.command("skip"))
 async def skipvc(_, m):
+    if str(m.from_user.id) not in AuthUsers:
+        return
     mssg = await m.reply_text("Skipped current song!")
     song, pos, from_user = get_from_queue(m.chat.id)
     info_dict = ytdetails = await get_yt_dict(song)
@@ -137,7 +143,10 @@ async def ytvc(_, m):
         return
     text = m.text.split(" ", 1)
     remote = await yt_stream(text[1], only_audio=False)
-    await vc.join_group_call(m.chat.id, AudioVideoPiped(remote, HighQualityAudio(), HighQualityVideo()))
+    try:
+        await vc.join_group_call(m.chat.id, AudioVideoPiped(remote, HighQualityAudio(), HighQualityVideo()))
+    except AlreadyJoinedError:
+        await vc.change_stream(m.chat.id, AudioVideoPiped(remote, HighQualityAudio(), HighQualityVideo()))
     await m.reply_text("Okay")
 
 @bot.on_message(filters.command("play"))
@@ -185,7 +194,6 @@ async def streamhandler(vc: PyTgCalls, update: Update):
     await vc.change_stream(update.chat_id, AudioPiped(remote, HighQualityAudio()))
     QUEUE[update.chat_id].pop(pos)
     await bot.send_photo(update.chat_id, f"https://i.ytimg.com/vi/{ytdetails['id']}/maxresdefault.jpg", caption=f"Playing: `{title}`\nDuration: `{duration}`")
-    await asyncio.sleep(ytdetails["duration"] + 5)
 
 bot.start()
 vc.start()
