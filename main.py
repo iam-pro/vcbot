@@ -2,7 +2,7 @@ import traceback, ffmpeg, re
 import asyncio, datetime
 from pytgcalls import PyTgCalls, StreamType, idle
 from pytgcalls.types import Update
-from pytgcalls.types.input_stream import AudioPiped
+from pytgcalls.types.input_stream import AudioPiped, AudioVideoPiped
 from pytgcalls.types.input_stream.quality import HighQualityAudio
 from pytgcalls.types.input_stream.quality import HighQualityVideo
 from pytgcalls.types.input_stream import InputStream
@@ -16,13 +16,38 @@ vc = PyTgCalls(user)
 #vc.start()
 queue = []
 
-async def yt_stream(query):
+async def yt_stream(query, only_audio=True):
+    if only_audio:
+        if re.search("youtu", query):
+            proc = await asyncio.create_subprocess_exec(
+            'youtube-dl',
+            '-g',
+            '-f',
+            'bestaudio/best',
+            f'{query}',
+            stdout=asyncio.subprocess.PIPE,
+            stderr=asyncio.subprocess.PIPE,
+            )
+            stdout, stderr = await proc.communicate()
+            return stdout.decode().split('\n')[0]
+        else:
+            proc = await asyncio.create_subprocess_exec(
+            'youtube-dl',
+            '-g',
+            '-f',
+            # CHANGE THIS BASED ON WHAT YOU WANT
+            'best[height<=?720][width<=?1280]',
+            f'ytsearch1:{query}',
+            stdout=asyncio.subprocess.PIPE,
+            stderr=asyncio.subprocess.PIPE,
+            )
+            stdout, stderr = await proc.communicate()
+            return stdout.decode().split('\n')[0]
     if re.search("youtu", query):
         proc = await asyncio.create_subprocess_exec(
         'youtube-dl',
         '-g',
         '-f',
-        # CHANGE THIS BASED ON WHAT YOU WANT
         'best[height<=?720][width<=?1280]',
         f'{query}',
         stdout=asyncio.subprocess.PIPE,
@@ -90,13 +115,13 @@ async def skipvc(_, m):
     song, pos, from_user = get_from_queue(m.chat.id)
     info_dict = ytdetails = await get_yt_dict(song)
     title = info_dict["title"]
-    remote = await yt_stream(song)
+    remote = await yt_stream(song, only_audio=False)
     xx = datetime.timedelta(seconds=info_dict["duration"])
     if str(xx).startswith("0"):
         duration = (str(xx)[2:])
     else:
         duration = str(xx)
-    await vc.change_stream(m.chat.id, AudioPiped(remote, HighQualityAudio()))
+    await vc.change_stream(m.chat.id, AudioVideoPiped(remote, HighQualityAudio(), HighQualityVideo()))
     QUEUE[m.chat.id].pop(pos)
     await bot.send_photo(m.chat.id, f"https://i.ytimg.com/vi/{ytdetails['id']}/maxresdefault.jpg", caption=f"Playing {title}\nDuration: {duration}")
     await asyncio.sleep(info_dict["duration"] + 5)
