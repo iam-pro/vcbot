@@ -62,11 +62,15 @@ async def skipvc(_, m):
     ytdetails = await get_yt_dict(song)
     info_dict = download(ytdetails["id"], m.chat.id)
     title = info_dict["title"]
-    duration = info_dict["duration"]
+    xx = datetime.timedelta(seconds=info_dict["duration"])
+    if str(xx).startswith("0"):
+        duration = (str(xx)[2:])
+    else:
+        duration = str(xx)
     transcode(f"input{m.chat.id}.webm", m.chat.id)
     await vc.change_stream(m.chat.id, InputStream(InputAudioStream(f"input{m.chat.id}.raw"),),)
     QUEUE[m.chat.id].pop(pos)
-    await bot.send_photo(m.chat.id, f"https://i.ytimg.com/vi/{ytdetails['id']}/hq720.jpg", caption=f"Playing {title}\nDuration: {duration}")
+    await bot.send_photo(m.chat.id, f"https://i.ytimg.com/vi/{ytdetails['id']}/maxresdefault.jpg", caption=f"Playing {title}\nDuration: {duration}")
     await asyncio.sleep(duration + 5)
     os.remove(f"input{m.chat.id}.raw")
 
@@ -85,7 +89,11 @@ async def playvc(_, m):
         title = info_dict["title"]
         print(info_dict["thumbnails"])
         thumb = info_dict["thumbnails"][1]["url"]
-        duration = info_dict["duration"]
+        xx = datetime.timedelta(seconds=info_dict["duration"])
+        if str(xx).startswith("0"):
+            duration = (str(xx)[2:])
+        else:
+            duration = str(xx)
         dl = download(info_dict["webpage_url"], chat_id)
         transcode(f"input{chat_id}.webm", chat_id)
         await vc.join_group_call(
@@ -97,7 +105,7 @@ async def playvc(_, m):
             ),
             stream_type=StreamType().local_stream
         )
-        await bot.send_photo(m.chat.id, f"https://i.ytimg.com/vi/{ytdetails['id']}/hq720.jpg", caption=f"Playing: `{title}`\nDuration: `{duration}`")
+        await bot.send_photo(m.chat.id, f"https://i.ytimg.com/vi/{ytdetails['id']}/maxresdefault.jpg", caption=f"Playing: `{title}`\nDuration: `{duration}`")
     elif _check == True:
         print(m.chat.id, text[1], m.from_user.id)
         add_to_queue(m.chat.id, text[1], m.from_user.id)
@@ -110,14 +118,17 @@ async def streamhandler(vc: PyTgCalls, update: Update):
     info_dict = download(ytdetails["id"], update.chat_id)
     title = info_dict["title"]
     thumb = info_dict["thumbnails"][1]["url"]
-    duration = info_dict["duration"]
+    xx = datetime.timedelta(seconds=info_dict["duration"])
+    if str(xx).startswith("0"):
+        duration = (str(xx)[2:])
+    else:
+        duration = str(xx)
     transcode(f"input{update.chat_id}.webm", update.chat_id)
     msg = f"Playing {title} !"
     await vc.change_stream(update.chat_id, InputStream(InputAudioStream(f"input{update.chat_id}.raw"),),)
     QUEUE[update.chat_id].pop(pos)
-    msgg = await bot.send_message(update.chat_id, f"Playing {song}")
+    await bot.send_photo(m.chat.id, f"https://i.ytimg.com/vi/{ytdetails['id']}/maxresdefault.jpg", caption=f"Playing: `{title}`\nDuration: `{duration}`")
     await asyncio.sleep(duration + 5)
-    await msgg.delete()
 
 bot.start()
 vc.start()
