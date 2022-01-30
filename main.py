@@ -83,6 +83,7 @@ async def playvc(_, m):
         chat_id = m.chat.id
         info_dict = download(ytdetails["id"], chat_id)
         title = info_dict["title"]
+        print(info_dict["thumbnails"])
         thumb = info_dict["thumbnails"][1]["url"]
         duration = info_dict["duration"]
         dl = download(info_dict["webpage_url"], chat_id)
