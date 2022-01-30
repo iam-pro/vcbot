@@ -14,6 +14,20 @@ vc = PyTgCalls(user)
 #vc.start()
 queue = []
 
+async def yt_stream(query):
+    proc = await asyncio.create_subprocess_exec(
+        'youtube-dl',
+        '-g',
+        '-f',
+        # CHANGE THIS BASED ON WHAT YOU WANT
+        'best[height<=?720][width<=?1280]',
+        f'ytsearch1:{query}',
+        stdout=asyncio.subprocess.PIPE,
+        stderr=asyncio.subprocess.PIPE,
+    )
+    stdout, stderr = await proc.communicate()
+    return stdout.decode().split('\n')[0]
+
 def check_value(data, val):
     if len(data) > 0:
       for item in data:
@@ -72,6 +86,15 @@ async def skipvc(_, m):
     await bot.send_photo(m.chat.id, f"https://i.ytimg.com/vi/{ytdetails['id']}/maxresdefault.jpg", caption=f"Playing {title}\nDuration: {duration}")
     await asyncio.sleep(info_dict["duration"] + 5)
     os.remove(f"input{m.chat.id}.webm")
+
+@bot.on_message(filters.command("yt"))
+async def ytvc(_, m):
+    if str(m.from_user.id) not in AuthUsers:
+        return
+    text = m.text.split(" ", 1)
+    remote = await yt_stream(text[1])
+    await vc.join_group_call(m.chat.id, AudioVideoPiped(remote, HighQualityAudio(), HighQualityVideo()))
+    await m.reply_text("Okay")
 
 @bot.on_message(filters.command("play"))
 async def playvc(_, m):
