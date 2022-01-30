@@ -111,8 +111,8 @@ async def ytvc(_, m):
     text = m.text.split(" ", 1)
     remote = await yt_stream(text[1])
     await vc.join_group_call(
-        m.chat.id, AudioVideoPiped(remote, HighQualityAudio(), HighQualityVideo())
-    )
+        m.chat.id,
+        AudioVideoPiped(remote, HighQualityAudio(), HighQualityVideo()))
     await m.reply_text("Han Bhai Baja rha hun")
 
 
@@ -166,7 +166,8 @@ async def streamhandler(vc: PyTgCalls, update: Update):
     else:
         duration = str(xx)
     msg = f"Playing {title} !"
-    await vc.change_stream(update.chat_id, AudioPiped(f"input{update.chat_id}.webm"))
+    await vc.change_stream(update.chat_id,
+                           AudioPiped(f"input{update.chat_id}.webm"))
     QUEUE[update.chat_id].pop(pos)
     await bot.send_photo(
         update.chat_id,
