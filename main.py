@@ -153,7 +153,7 @@ async def streamhandler(vc: PyTgCalls, update: Update):
     else:
         duration = str(xx)
     msg = f"Playing {title} !"
-    await vc.change_stream(update.chat_id, AudioPiped(remote, HighQualityAudio())
+    await vc.change_stream(update.chat_id, AudioPiped(remote, HighQualityAudio()))
     QUEUE[update.chat_id].pop(pos)
     await bot.send_photo(update.chat_id, f"https://i.ytimg.com/vi/{ytdetails['id']}/maxresdefault.jpg", caption=f"Playing: `{title}`\nDuration: `{duration}`")
     await asyncio.sleep(ytdetails["duration"] + 5)
