@@ -70,7 +70,7 @@ async def skipvc(_, m):
     await vc.change_stream(m.chat.id, AudioPiped(f"input{m.chat.id}.webm"))
     QUEUE[m.chat.id].pop(pos)
     await bot.send_photo(m.chat.id, f"https://i.ytimg.com/vi/{ytdetails['id']}/maxresdefault.jpg", caption=f"Playing {title}\nDuration: {duration}")
-    await asyncio.sleep(duration + 5)
+    await asyncio.sleep(info_dict["duration"] + 5)
     os.remove(f"input{m.chat.id}.webm")
 
 @bot.on_message(filters.command("play"))
