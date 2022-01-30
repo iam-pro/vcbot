@@ -146,7 +146,11 @@ async def ytvc(_, m):
     try:
         await vc.join_group_call(m.chat.id, AudioVideoPiped(remote, HighQualityAudio(), HighQualityVideo()))
     except AlreadyJoinedError:
-        await vc.change_stream(m.chat.id, AudioVideoPiped(remote, HighQualityAudio(), HighQualityVideo()))
+        _check = check_value(json.loads(vc.active_calls.__str__()), m.chat.id)
+        if _check == False:
+            await vc.change_stream(m.chat.id, AudioVideoPiped(remote, HighQualityAudio(), HighQualityVideo()))
+        else:
+            return
     await m.reply_text("Okay")
 
 @bot.on_message(filters.command("play"))
