@@ -109,6 +109,10 @@ async def joinvc(_, m):
         print(traceback.print_exc())
         await m.reply(e)
 
+@bot.on_message(filters.command("stop"))
+async def joinvc(_, m):
+    await vc.leave_group_call(m.chat.id)
+
 @bot.on_message(filters.command("skip"))
 async def skipvc(_, m):
     mssg = await m.reply_text("Skipped current song!")
