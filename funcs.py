@@ -11,33 +11,32 @@ def add_to_queue(chat_id, song_name, from_user):
     except BaseException:
         play_at = 1
     if QUEUE.get(int(chat_id)):
-        QUEUE[int(chat_id)].update(
-            {
-                play_at: {
+        QUEUE[int(chat_id)].append(
+            [
+                {
                     "title": song_name,
                     "from_user": from_user,
                 }
-            }
+            ]
         )
     else:
         QUEUE.update(
             {
-                int(chat_id): {
-                    play_at: {
+                int(chat_id): [
+                    {
                         "title": song_name,
                         "from_user": from_user,
                     }
-                }
+                ]
             }
         )
     return QUEUE[int(chat_id)]
 
 def get_from_queue(chat_id):
-    play_this = list(QUEUE[int(chat_id)].keys())[0]
-    info = QUEUE[int(chat_id)][play_this]
+    info = QUEUE[int(chat_id)][0]
     title = info["title"]
     from_user = info["from_user"]
-    return title, play_this, from_user
+    return title, from_user
 
 async def get_yt_dict(query):
   omk = ydl.extract_info(f"ytsearch:{query}", download=False)
