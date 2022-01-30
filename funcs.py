@@ -37,7 +37,7 @@ def get_from_queue(chat_id):
     info = QUEUE[int(chat_id)][play_this]
     title = info["title"]
     from_user = info["from_user"]
-    return title, from_user, play_this
+    return title, play_this, from_user
 
 async def get_yt_dict(query):
   omk = ydl.extract_info(f"ytsearch:{query}", False)
