@@ -58,18 +58,17 @@ async def joinvc(_, m):
 @bot.on_message(filters.command("skip"))
 async def skipvc(_, m):
     mssg = await m.reply_text("Skipped current song!")
-    song, pos, from_user = get_from_queue(update.chat_id)
+    song, pos, from_user = get_from_queue(m.chat.id)
     ytdetails = await get_yt_dict(song)
-    info_dict = download(ytdetails["id"], update.chat_id)
+    info_dict = download(ytdetails["id"], m.chat.id)
     title = info_dict["title"]
-    thumb = info_dict["thumbnails"][1]["url"]
     duration = info_dict["duration"]
-    transcode(f"input{update.chat_id}.webm", update.chat_id)
-    await vc.change_stream(update.chat_id, InputStream(InputAudioStream(f"input{update.chat_id}.raw"),),)
-    QUEUE[update.chat_id].pop(pos)
-    await bot.send_document(update.chat_id, thumb, caption=f"Playing {title}\nDuration: {duration}")
+    transcode(f"input{m.chat.id}.webm", m.chat.id)
+    await vc.change_stream(m.chat.id, InputStream(InputAudioStream(f"input{m.chat.id}.raw"),),)
+    QUEUE[m.chat.id].pop(pos)
+    await bot.send_document(m.chat.id, f"https://i.ytimg.com/vi/{ytdetails['id']}/hq720.jpg", caption=f"Playing {title}\nDuration: {duration}")
     await asyncio.sleep(duration + 5)
-    os.remove(f"input{update.chat_id}.raw")
+    os.remove(f"input{m.chat.id}.raw")
 
 @bot.on_message(filters.command("play"))
 async def playvc(_, m):
