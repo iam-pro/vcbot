@@ -4,3 +4,4 @@ python-decouple
 ffmpeg-python
 youtube-dl
 youtube-search
+tgcrypto
