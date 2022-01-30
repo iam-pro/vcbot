@@ -67,7 +67,7 @@ async def skipvc(_, m):
         duration = (str(xx)[2:])
     else:
         duration = str(xx)
-    await vc.change_stream(m.chat.id, AudioPiped(f"input{m.chat.id}.webm"), stream_type=StreamType().pulse_stream)
+    await vc.change_stream(m.chat.id, AudioPiped(f"input{m.chat.id}.webm"))
     QUEUE[m.chat.id].pop(pos)
     await bot.send_photo(m.chat.id, f"https://i.ytimg.com/vi/{ytdetails['id']}/maxresdefault.jpg", caption=f"Playing {title}\nDuration: {duration}")
     await asyncio.sleep(duration + 5)
@@ -118,7 +118,7 @@ async def streamhandler(vc: PyTgCalls, update: Update):
     else:
         duration = str(xx)
     msg = f"Playing {title} !"
-    await vc.change_stream(update.chat_id, AudioPiped(f"input{update.chat_id}.webm"),stream_type=StreamType().pulse_stream)
+    await vc.change_stream(update.chat_id, AudioPiped(f"input{update.chat_id}.webm"))
     QUEUE[update.chat_id].pop(pos)
     await bot.send_photo(update.chat_id, f"https://i.ytimg.com/vi/{ytdetails['id']}/maxresdefault.jpg", caption=f"Playing: `{title}`\nDuration: `{duration}`")
     await asyncio.sleep(info_dict["duration"] + 5)
