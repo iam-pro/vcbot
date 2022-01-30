@@ -122,7 +122,7 @@ async def skipvc(_, m):
     if str(m.from_user.id) not in AuthUsers:
         return
     mssg = await m.reply_text("Skipped current song!")
-    song, pos, from_user = get_from_queue(m.chat.id)
+    song, from_user = get_from_queue(m.chat.id)
     info_dict = ytdetails = await get_yt_dict(song)
     title = info_dict["title"]
     remote = await yt_stream(song)
@@ -132,7 +132,7 @@ async def skipvc(_, m):
     else:
         duration = str(xx)
     await vc.change_stream(m.chat.id, AudioPiped(remote, HighQualityAudio()))
-    QUEUE[m.chat.id].pop(pos)
+    QUEUE[m.chat.id].pop(0)
     await bot.send_photo(m.chat.id, f"https://i.ytimg.com/vi/{ytdetails['id']}/maxresdefault.jpg", caption=f"Playing {title}\nDuration: {duration}")
     await asyncio.sleep(info_dict["duration"] + 5)
     os.remove(f"input{m.chat.id}.webm")
@@ -187,7 +187,7 @@ async def playvc(_, m):
 
 @vc.on_stream_end()
 async def streamhandler(vc: PyTgCalls, update: Update):
-    song, pos, from_user = get_from_queue(update.chat_id)
+    song, from_user = get_from_queue(update.chat_id)
     ytdetails = await get_yt_dict(song)
     remote = await yt_stream(song)
     title = ytdetails["title"]
@@ -199,7 +199,7 @@ async def streamhandler(vc: PyTgCalls, update: Update):
         duration = str(xx)
     msg = f"Playing {title} !"
     await vc.change_stream(update.chat_id, AudioPiped(remote, HighQualityAudio()))
-    QUEUE[update.chat_id].pop(pos)
+    QUEUE[update.chat_id].pop(0)
     await bot.send_photo(update.chat_id, f"https://i.ytimg.com/vi/{ytdetails['id']}/maxresdefault.jpg", caption=f"Playing: `{title}`\nDuration: `{duration}`")
 
 bot.start()
