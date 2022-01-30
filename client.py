@@ -9,7 +9,7 @@ SESSION = config("SESSION")
 api_id = config("api_id")
 api_hash = config("api_hash")
 bot_token = config("bot_token")
-AuthUsers = list(config("AuthUsers"))
+AuthUsers = list(config("AuthUsers").split(" "))
 QUEUE = {}
 
 from pyrogram import Client, filters
