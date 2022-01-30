@@ -94,7 +94,7 @@ async def ytvc(_, m):
     text = m.text.split(" ", 1)
     remote = await yt_stream(text[1])
     await vc.join_group_call(m.chat.id, AudioVideoPiped(remote, HighQualityAudio(), HighQualityVideo()))
-    await m.reply_text("Okay")
+    await m.reply_text("Han Bhai Baja rha hun")
 
 @bot.on_message(filters.command("play"))
 async def playvc(_, m):
