@@ -169,9 +169,12 @@ async def playvc(_, m):
             duration = (str(xx)[2:])
         else:
             duration = str(xx)
-        await vc.join_group_call(
-            m.chat.id, AudioPiped(remote, HighQualityAudio())
-        )
+        try:
+            await vc.join_group_call(
+                m.chat.id, AudioPiped(remote, HighQualityAudio())
+            )
+        except AlreadyJoinedError:
+            await vc.change_stream(m.chat.id, AudioPiped(remote, HighQualityAudio()))
         await bot.send_photo(m.chat.id, f"https://i.ytimg.com/vi/{ytdetails['id']}/maxresdefault.jpg", caption=f"Playing: `{title}`\nDuration: `{duration}`")
     elif _check == True:
         print(m.chat.id, text[1], m.from_user.id)
