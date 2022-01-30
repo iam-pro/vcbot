@@ -1,5 +1,7 @@
-import traceback, ffmpeg
-import asyncio, datetime
+import traceback
+import ffmpeg
+import asyncio
+import datetime
 from pytgcalls import PyTgCalls, StreamType, idle
 from pytgcalls.types import Update
 from pytgcalls.types.input_stream import AudioPiped
@@ -11,8 +13,9 @@ from funcs import *
 ydl_opts = {"format": "bestaudio"}
 ydl = youtube_dl.YoutubeDL(ydl_opts)
 vc = PyTgCalls(user)
-#vc.start()
+# vc.start()
 queue = []
+
 
 async def yt_stream(query):
     proc = await asyncio.create_subprocess_exec(
@@ -28,19 +31,21 @@ async def yt_stream(query):
     stdout, stderr = await proc.communicate()
     return stdout.decode().split('\n')[0]
 
+
 def check_value(data, val):
     if len(data) > 0:
-      for item in data:
-          if val in item.values():
-              print("sdasd Yes")
-              return item["is_playing"]
-          else:
-              print("sex")
-              return False
+        for item in data:
+            if val in item.values():
+                print("sdasd Yes")
+                return item["is_playing"]
+            else:
+                print("sex")
+                return False
     else:
-      print(len(data))
-      print("Nooooooooo")
-      return False
+        print(len(data))
+        print("Nooooooooo")
+        return False
+
 
 def transcode(filename: str, chat_id: int):
     ffmpeg.input(filename).output(
@@ -53,12 +58,14 @@ def transcode(filename: str, chat_id: int):
     ).overwrite_output().run()
     os.remove(filename)
 
+
 def download(idd, chat_id):
     info_dict = ydl.extract_info(idd, download=False)
     audio_file = ydl.prepare_filename(info_dict)
     ydl.process_info(info_dict)
     os.rename(audio_file, f"input{chat_id}.webm")
     return info_dict
+
 
 @bot.on_message(filters.command("vcs"))
 async def joinvc(_, m):
@@ -68,6 +75,7 @@ async def joinvc(_, m):
     except Exception as e:
         print(traceback.print_exc())
         await m.reply(e)
+
 
 @bot.on_message(filters.command("skip"))
 async def skipvc(_, m):
@@ -87,6 +95,7 @@ async def skipvc(_, m):
     await asyncio.sleep(info_dict["duration"] + 5)
     os.remove(f"input{m.chat.id}.webm")
 
+
 @bot.on_message(filters.command("yt"))
 async def ytvc(_, m):
     if str(m.from_user.id) not in AuthUsers:
@@ -95,6 +104,7 @@ async def ytvc(_, m):
     remote = await yt_stream(text[1])
     await vc.join_group_call(m.chat.id, AudioVideoPiped(remote, HighQualityAudio(), HighQualityVideo()))
     await m.reply_text("Han Bhai Baja rha hun")
+
 
 @bot.on_message(filters.command("play"))
 async def playvc(_, m):
@@ -127,6 +137,7 @@ async def playvc(_, m):
         print(m.chat.id, text[1], m.from_user.id)
         add_to_queue(m.chat.id, text[1], m.from_user.id)
         await m.reply("added to queue")
+
 
 @vc.on_stream_end()
 async def streamhandler(vc: PyTgCalls, update: Update):
