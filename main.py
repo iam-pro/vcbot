@@ -3,6 +3,8 @@ import asyncio, datetime
 from pytgcalls import PyTgCalls, StreamType, idle
 from pytgcalls.types import Update
 from pytgcalls.types.input_stream import AudioPiped
+from pytgcalls.types.input_stream.quality import HighQualityAudio
+from pytgcalls.types.input_stream.quality import HighQualityVideo
 from pytgcalls.types.input_stream import InputStream
 from client import *
 from multiprocessing import Process
@@ -93,7 +95,7 @@ async def ytvc(_, m):
         return
     text = m.text.split(" ", 1)
     remote = await yt_stream(text[1])
-    await vc.join_group_call(m.chat.id, AudioVideoPiped(remote, HighQualityAudio(), HighQualityVideo()))
+    await vc.join_group_call(m.chat.id, AudioPiped(remote, HighQualityAudio()))
     await m.reply_text("Okay")
 
 @bot.on_message(filters.command("play"))
