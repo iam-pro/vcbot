@@ -115,7 +115,7 @@ async def skipvc(_, m):
     song, pos, from_user = get_from_queue(m.chat.id)
     info_dict = ytdetails = await get_yt_dict(song)
     title = info_dict["title"]
-    remote = await yt_stream(song, only_audio=False)
+    remote = await yt_stream(song)
     xx = datetime.timedelta(seconds=info_dict["duration"])
     if str(xx).startswith("0"):
         duration = (str(xx)[2:])
@@ -132,7 +132,7 @@ async def ytvc(_, m):
     if str(m.from_user.id) not in AuthUsers:
         return
     text = m.text.split(" ", 1)
-    remote = await yt_stream(text[1])
+    remote = await yt_stream(text[1], only_audio=False)
     await vc.join_group_call(m.chat.id, AudioVideoPiped(remote, HighQualityAudio(), HighQualityVideo()))
     await m.reply_text("Okay")
 
