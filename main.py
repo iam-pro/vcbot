@@ -88,15 +88,15 @@ async def joinvc(_, m):
 async def skipvc(_, m):
     mssg = await m.reply_text("Skipped current song!")
     song, pos, from_user = get_from_queue(m.chat.id)
-    ytdetails = await get_yt_dict(song)
-    info_dict = download(ytdetails["id"], m.chat.id)
+    info_dict = ytdetails = await get_yt_dict(song)
     title = info_dict["title"]
+    remote = await yt_stream(song)
     xx = datetime.timedelta(seconds=info_dict["duration"])
     if str(xx).startswith("0"):
         duration = (str(xx)[2:])
     else:
         duration = str(xx)
-    await vc.change_stream(m.chat.id, AudioPiped(f"input{m.chat.id}.webm"))
+    await vc.change_stream(m.chat.id, AudioPiped(remote, HighQualityAudio()))
     QUEUE[m.chat.id].pop(pos)
     await bot.send_photo(m.chat.id, f"https://i.ytimg.com/vi/{ytdetails['id']}/maxresdefault.jpg", caption=f"Playing {title}\nDuration: {duration}")
     await asyncio.sleep(info_dict["duration"] + 5)
