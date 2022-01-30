@@ -66,7 +66,7 @@ async def skipvc(_, m):
     transcode(f"input{m.chat.id}.webm", m.chat.id)
     await vc.change_stream(m.chat.id, InputStream(InputAudioStream(f"input{m.chat.id}.raw"),),)
     QUEUE[m.chat.id].pop(pos)
-    await bot.send_document(m.chat.id, f"https://i.ytimg.com/vi/{ytdetails['id']}/hq720.jpg", caption=f"Playing {title}\nDuration: {duration}")
+    await bot.send_photo(m.chat.id, f"https://i.ytimg.com/vi/{ytdetails['id']}/hq720.jpg", caption=f"Playing {title}\nDuration: {duration}")
     await asyncio.sleep(duration + 5)
     os.remove(f"input{m.chat.id}.raw")
 
@@ -87,7 +87,6 @@ async def playvc(_, m):
         duration = info_dict["duration"]
         dl = download(info_dict["webpage_url"], chat_id)
         transcode(f"input{chat_id}.webm", chat_id)
-        msg = f"Playing {title} !"
         await vc.join_group_call(
             m.chat.id,
             InputStream(
@@ -97,7 +96,7 @@ async def playvc(_, m):
             ),
             stream_type=StreamType().local_stream
         )
-        await m.reply(msg)
+        await bot.send_photo(m.chat.id, f"https://i.ytimg.com/vi/{ytdetails['id']}/hq720.jpg", caption=f"Playing: `{title}`\nDuration: `{duration}`")
     elif _check == True:
         print(m.chat.id, text[1], m.from_user.id)
         add_to_queue(m.chat.id, text[1], m.from_user.id)
