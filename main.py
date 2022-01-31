@@ -12,7 +12,7 @@ from multiprocessing import Process
 from funcs import *
 
 ydl_opts = {"format": "bestaudio"}
-ydl = youtube_dl.YoutubeDL(ydl_opts)
+ydl = yt_dlp.YoutubeDL(ydl_opts)
 vc = PyTgCalls(user)
 #vc.start()
 queue = []
@@ -71,9 +71,8 @@ async def yt_stream(query, only_audio=True):
 
 def check_value(data, val):
     if len(data) > 0:
-      for item in data:
-          if val in item.values():
-              is_playing = item["is_playing"]
+          if val in data and data[val] == 1:
+              is_playing = True
           else:
               is_playing = False
     else:
@@ -103,7 +102,7 @@ async def joinvc(_, m):
     if str(m.from_user.id) not in AuthUsers:
         return
     try:
-        await m.reply_text(f"{vc.active_calls}\n\n{QUEUE}", quote=True)
+        await m.reply_text(f"{vc._call_holder._calls}\n\n{QUEUE}", quote=True)
     except Exception as e:
         print(traceback.print_exc())
         await m.reply(e)
@@ -143,7 +142,7 @@ async def ytvc(_, m):
     try:
         await vc.join_group_call(m.chat.id, AudioVideoPiped(remote, HighQualityAudio(), HighQualityVideo()))
     except AlreadyJoinedError:
-        _check = check_value(json.loads(vc.active_calls.__str__()), m.chat.id)
+        _check = check_value(vc.vc._call_holder._calls, m.chat.id)
         if _check == False:
             await vc.change_stream(m.chat.id, AudioVideoPiped(remote, HighQualityAudio(), HighQualityVideo()))
         else:
@@ -156,7 +155,7 @@ async def playvc(_, m):
     print(AuthUsers)
     if str(m.from_user.id) not in AuthUsers:
         return
-    _check = check_value(json.loads(vc.active_calls.__str__()), m.chat.id)
+    _check = check_value(vc._call_holder._calls, m.chat.id)
     print(_check)
     if _check == False:
         ytdetails = await get_yt_dict(text[1])
