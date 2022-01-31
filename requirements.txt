@@ -3,5 +3,6 @@ pyrogram
 python-decouple
 ffmpeg-python
 youtube-dl
+yt-dlp
 youtube-search
 tgcrypto
