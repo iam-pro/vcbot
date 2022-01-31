@@ -1,7 +1,7 @@
 import yt_dlp, json, re
 from client import QUEUE
 
-ydl_opts = {"format": "bestaudio", "no-playlist": True}
+ydl_opts = {"format": "bestaudio", "no-playlist": True, "geo-bypass": True}
 ydl = yt_dlp.YoutubeDL(ydl_opts)
 
 def add_to_queue(chat_id, song_name, from_user):
