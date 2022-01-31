@@ -102,7 +102,7 @@ def download(idd, chat_id):
 async def joinvc(_, m):
     if str(m.chat.id) not in AuthChats:
         return
-    if await is_admin(m.chat.id, m.user.id) == False:
+    if await is_admin(m.chat.id, m.from_user.id) == False:
         return
     try:
         await m.reply_text(f"{vc._call_holder._calls}\n\n{QUEUE}", quote=True)
@@ -114,7 +114,7 @@ async def joinvc(_, m):
 async def joinvc(_, m):
     if str(m.chat.id) not in AuthChats:
         return
-    if await is_admin(m.chat.id, m.user.id) == False:
+    if await is_admin(m.chat.id, m.from_user.id) == False:
         return
     await vc.leave_group_call(m.chat.id)
 
@@ -122,7 +122,7 @@ async def joinvc(_, m):
 async def skipvc(_, m):
     if str(m.chat.id) not in AuthChats:
         return
-    if await is_admin(m.chat.id, m.user.id) == False:
+    if await is_admin(m.chat.id, m.from_user.id) == False:
         return
     mssg = await m.reply_text("Skipped current song!")
     song, from_user = get_from_queue(m.chat.id)
@@ -142,7 +142,7 @@ async def skipvc(_, m):
 async def ytvc(_, m):
     if str(m.chat.id) not in AuthChats:
         return
-    if await is_admin(m.chat.id, m.user.id) == False:
+    if await is_admin(m.chat.id, m.from_user.id) == False:
         return
     text = m.text.split(" ", 1)
     remote = await yt_stream(text[1], only_audio=False)
@@ -161,7 +161,7 @@ async def playvc(_, m):
     text = m.text.split(" ", 1)
     if str(m.chat.id) not in AuthChats:
         return
-    if await is_admin(m.chat.id, m.user.id) == False:
+    if await is_admin(m.chat.id, m.from_user.id) == False:
         return
     _check = check_value(vc._call_holder._calls, m.chat.id)
     print(_check)
