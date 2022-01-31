@@ -11,8 +11,6 @@ from client import *
 from multiprocessing import Process
 from funcs import *
 
-ydl_opts = {"format": "bestaudio"}
-ydl = yt_dlp.YoutubeDL(ydl_opts)
 vc = PyTgCalls(user)
 #vc.start()
 queue = []
@@ -21,7 +19,7 @@ async def yt_stream(query, only_audio=True):
     if only_audio:
         if re.search("youtu", query):
             proc = await asyncio.create_subprocess_exec(
-            'youtube-dl',
+            'yt-dlp',
             '-g',
             '-f',
             'bestaudio/best',
@@ -33,7 +31,7 @@ async def yt_stream(query, only_audio=True):
             return stdout.decode().split('\n')[0]
         else:
             proc = await asyncio.create_subprocess_exec(
-            'youtube-dl',
+            'yt-dlp',
             '-g',
             '-f',
             # CHANGE THIS BASED ON WHAT YOU WANT
@@ -46,7 +44,7 @@ async def yt_stream(query, only_audio=True):
             return stdout.decode().split('\n')[0]
     if re.search("youtu", query):
         proc = await asyncio.create_subprocess_exec(
-        'youtube-dl',
+        'yt-dlp',
         '-g',
         '-f',
         'best[height<=?720][width<=?1280]',
@@ -57,7 +55,7 @@ async def yt_stream(query, only_audio=True):
         stdout, stderr = await proc.communicate()
         return stdout.decode().split('\n')[0]
     proc = await asyncio.create_subprocess_exec(
-        'youtube-dl',
+        'yt-dlp',
         '-g',
         '-f',
         # CHANGE THIS BASED ON WHAT YOU WANT
