@@ -15,6 +15,9 @@ vc = PyTgCalls(user)
 #vc.start()
 queue = []
 
+async def is_admin(chat, user):
+    return user in [x.user.id async for x in bot.iter_chat_members(chat_id, filter="administrators") if x.can_manage_voice_chats]
+
 async def yt_stream(query, only_audio=True):
     if only_audio:
         if re.search("youtu", query):
@@ -97,7 +100,9 @@ def download(idd, chat_id):
 
 @bot.on_message(filters.command("vcs"))
 async def joinvc(_, m):
-    if str(m.from_user.id) not in AuthUsers:
+    if str(m.chat.id) not in AuthChats:
+        return
+    if await is_admin(m.chat.id, m.user.id) == False:
         return
     try:
         await m.reply_text(f"{vc._call_holder._calls}\n\n{QUEUE}", quote=True)
@@ -107,13 +112,17 @@ async def joinvc(_, m):
 
 @bot.on_message(filters.command("stop"))
 async def joinvc(_, m):
-    if str(m.from_user.id) not in AuthUsers:
+    if str(m.chat.id) not in AuthChats:
+        return
+    if await is_admin(m.chat.id, m.user.id) == False:
         return
     await vc.leave_group_call(m.chat.id)
 
 @bot.on_message(filters.command("skip"))
 async def skipvc(_, m):
-    if str(m.from_user.id) not in AuthUsers:
+    if str(m.chat.id) not in AuthChats:
+        return
+    if await is_admin(m.chat.id, m.user.id) == False:
         return
     mssg = await m.reply_text("Skipped current song!")
     song, from_user = get_from_queue(m.chat.id)
@@ -128,19 +137,19 @@ async def skipvc(_, m):
     await vc.change_stream(m.chat.id, AudioPiped(remote, HighQualityAudio()))
     QUEUE[m.chat.id].pop(0)
     await bot.send_photo(m.chat.id, f"https://i.ytimg.com/vi/{ytdetails['id']}/maxresdefault.jpg", caption=f"Playing {title}\nDuration: {duration}")
-    await asyncio.sleep(info_dict["duration"] + 5)
-    os.remove(f"input{m.chat.id}.webm")
 
 @bot.on_message(filters.command("yt"))
 async def ytvc(_, m):
-    if str(m.from_user.id) not in AuthUsers:
+    if str(m.chat.id) not in AuthChats:
+        return
+    if await is_admin(m.chat.id, m.user.id) == False:
         return
     text = m.text.split(" ", 1)
     remote = await yt_stream(text[1], only_audio=False)
     try:
         await vc.join_group_call(m.chat.id, AudioVideoPiped(remote, HighQualityAudio(), HighQualityVideo()))
     except AlreadyJoinedError:
-        _check = check_value(vc.vc._call_holder._calls, m.chat.id)
+        _check = check_value(vc._call_holder._calls, m.chat.id)
         if _check == False:
             await vc.change_stream(m.chat.id, AudioVideoPiped(remote, HighQualityAudio(), HighQualityVideo()))
         else:
@@ -150,8 +159,9 @@ async def ytvc(_, m):
 @bot.on_message(filters.command("play"))
 async def playvc(_, m):
     text = m.text.split(" ", 1)
-    print(AuthUsers)
-    if str(m.from_user.id) not in AuthUsers:
+    if str(m.chat.id) not in AuthChats:
+        return
+    if await is_admin(m.chat.id, m.user.id) == False:
         return
     _check = check_value(vc._call_holder._calls, m.chat.id)
     print(_check)
