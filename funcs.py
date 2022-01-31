@@ -1,4 +1,4 @@
-import youtube_dl, json
+import youtube_dl, json, re
 from client import QUEUE
 
 ydl_opts = {"format": "bestaudio", "no-playlist": True}
@@ -39,6 +39,9 @@ def get_from_queue(chat_id):
     return title, from_user
 
 async def get_yt_dict(query):
-  omk = ydl.extract_info(f"ytsearch:{query}", download=False)
-  yt = omk["entries"][0]
-  return yt
+    if re.search("youtu", query):
+        omk = ydl.extract_info(f"{query}", download=False)
+        return omk
+    omk = ydl.extract_info(f"ytsearch:{query}", download=False)
+    yt = omk["entries"][0]
+    return yt
