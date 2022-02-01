@@ -33,7 +33,10 @@ def add_to_queue(chat_id, song_name, from_user):
     return QUEUE[int(chat_id)]
 
 def get_from_queue(chat_id):
-    info = QUEUE[int(chat_id)][0]
+    try:
+        info = QUEUE[int(chat_id)][0]
+    except IndexError:
+        return
     title = info["title"]
     from_user = info["from_user"]
     return title, from_user
