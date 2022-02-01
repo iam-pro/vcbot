@@ -5,13 +5,16 @@ import traceback
 from multiprocessing import Process
 
 import ffmpeg
-from pytgcalls import PyTgCalls, StreamType, idle
+from pytgcalls import idle
+from pytgcalls import PyTgCalls
+from pytgcalls import StreamType
 from pytgcalls.exceptions import AlreadyJoinedError
 from pytgcalls.types import Update
-from pytgcalls.types.input_stream import (AudioPiped, AudioVideoPiped,
-                                          InputStream)
-from pytgcalls.types.input_stream.quality import (HighQualityAudio,
-                                                  HighQualityVideo)
+from pytgcalls.types.input_stream import AudioPiped
+from pytgcalls.types.input_stream import AudioVideoPiped
+from pytgcalls.types.input_stream import InputStream
+from pytgcalls.types.input_stream.quality import HighQualityAudio
+from pytgcalls.types.input_stream.quality import HighQualityVideo
 
 from client import *
 from funcs import *
