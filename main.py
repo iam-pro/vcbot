@@ -173,14 +173,15 @@ async def ytvc(_, m):
     remote = await yt_stream(text[1], only_audio=False)
     try:
         await vc.join_group_call(
-            m.chat.id, AudioVideoPiped(remote, HighQualityAudio(), HighQualityVideo())
-        )
+            m.chat.id,
+            AudioVideoPiped(remote, HighQualityAudio(), HighQualityVideo()))
     except AlreadyJoinedError:
         _check = check_value(vc._call_holder._calls, m.chat.id)
         if _check == False:
             await vc.change_stream(
                 m.chat.id,
-                AudioVideoPiped(remote, HighQualityAudio(), HighQualityVideo()),
+                AudioVideoPiped(remote, HighQualityAudio(),
+                                HighQualityVideo()),
             )
         else:
             return
@@ -209,9 +210,11 @@ async def playvc(_, m):
         else:
             duration = str(xx)
         try:
-            await vc.join_group_call(m.chat.id, AudioPiped(remote, HighQualityAudio()))
+            await vc.join_group_call(m.chat.id,
+                                     AudioPiped(remote, HighQualityAudio()))
         except AlreadyJoinedError:
-            await vc.change_stream(m.chat.id, AudioPiped(remote, HighQualityAudio()))
+            await vc.change_stream(m.chat.id,
+                                   AudioPiped(remote, HighQualityAudio()))
         await bot.send_photo(
             m.chat.id,
             f"https://i.ytimg.com/vi/{ytdetails['id']}/maxresdefault.jpg",
@@ -236,7 +239,8 @@ async def streamhandler(vc: PyTgCalls, update: Update):
     else:
         duration = str(xx)
     msg = f"Playing {title} !"
-    await vc.change_stream(update.chat_id, AudioPiped(remote, HighQualityAudio()))
+    await vc.change_stream(update.chat_id,
+                           AudioPiped(remote, HighQualityAudio()))
     QUEUE[update.chat_id].pop(0)
     await bot.send_photo(
         update.chat_id,
