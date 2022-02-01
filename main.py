@@ -15,7 +15,7 @@ vc = PyTgCalls(user)
 #vc.start()
 queue = []
 
-async def is_admin(chat, user):
+async def is_admin(chat_id, user):
     return user in [x.user.id async for x in bot.iter_chat_members(chat_id, filter="administrators") if x.can_manage_voice_chats]
 
 async def yt_stream(query, only_audio=True):
