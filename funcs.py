@@ -33,6 +33,8 @@ def add_to_queue(chat_id, song_name, from_user):
     return QUEUE[int(chat_id)]
 
 def get_from_queue(chat_id):
+    if not QUEUE.get(int(chat_id)):
+        return None
     if len(QUEUE[int(chat_id)]) == 0:
         return None
     info = QUEUE[int(chat_id)][0]
