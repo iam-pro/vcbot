@@ -125,6 +125,8 @@ async def skipvc(_, m):
     if await is_admin(m.chat.id, m.from_user.id) == False:
         return
     mssg = await m.reply_text("Skipped current song!")
+    if not get_from_queue(m.chat.id):
+        return await vc.leave_group_call(m.chat.id)
     song, from_user = get_from_queue(m.chat.id)
     info_dict = ytdetails = await get_yt_dict(song)
     title = info_dict["title"]
@@ -191,6 +193,8 @@ async def playvc(_, m):
 
 @vc.on_stream_end()
 async def streamhandler(vc: PyTgCalls, update: Update):
+    if not get_from_queue(m.chat.id):
+        return await vc.leave_group_call(m.chat.id)
     song, from_user = get_from_queue(update.chat_id)
     ytdetails = await get_yt_dict(song)
     remote = await yt_stream(song)
