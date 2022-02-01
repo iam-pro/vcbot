@@ -1,5 +1,8 @@
-import traceback, ffmpeg, re
-import asyncio, datetime
+import traceback
+import ffmpeg
+import re
+import asyncio
+import datetime
 from pytgcalls import PyTgCalls, StreamType, idle
 from pytgcalls.types import Update
 from pytgcalls.types.input_stream import AudioPiped, AudioVideoPiped
@@ -12,48 +15,50 @@ from multiprocessing import Process
 from funcs import *
 
 vc = PyTgCalls(user)
-#vc.start()
+# vc.start()
 queue = []
+
 
 async def is_admin(chat_id, user):
     return user in [x.user.id async for x in bot.iter_chat_members(chat_id, filter="administrators") if x.can_manage_voice_chats]
+
 
 async def yt_stream(query, only_audio=True):
     if only_audio:
         if re.search("youtu", query):
             proc = await asyncio.create_subprocess_exec(
-            'yt-dlp',
-            '-g',
-            '-f',
-            'bestaudio/best',
-            f'{query}',
-            stdout=asyncio.subprocess.PIPE,
-            stderr=asyncio.subprocess.PIPE,
+                'yt-dlp',
+                '-g',
+                '-f',
+                'bestaudio/best',
+                f'{query}',
+                stdout=asyncio.subprocess.PIPE,
+                stderr=asyncio.subprocess.PIPE,
             )
             stdout, stderr = await proc.communicate()
             return stdout.decode().split('\n')[0]
         else:
             proc = await asyncio.create_subprocess_exec(
-            'yt-dlp',
-            '-g',
-            '-f',
-            # CHANGE THIS BASED ON WHAT YOU WANT
-            'best[height<=?720][width<=?1280]',
-            f'ytsearch1:{query}',
-            stdout=asyncio.subprocess.PIPE,
-            stderr=asyncio.subprocess.PIPE,
+                'yt-dlp',
+                '-g',
+                '-f',
+                # CHANGE THIS BASED ON WHAT YOU WANT
+                'best[height<=?720][width<=?1280]',
+                f'ytsearch1:{query}',
+                stdout=asyncio.subprocess.PIPE,
+                stderr=asyncio.subprocess.PIPE,
             )
             stdout, stderr = await proc.communicate()
             return stdout.decode().split('\n')[0]
     if re.search("youtu", query):
         proc = await asyncio.create_subprocess_exec(
-        'yt-dlp',
-        '-g',
-        '-f',
-        'best[height<=?720][width<=?1280]',
-        f'{query}',
-        stdout=asyncio.subprocess.PIPE,
-        stderr=asyncio.subprocess.PIPE,
+            'yt-dlp',
+            '-g',
+            '-f',
+            'best[height<=?720][width<=?1280]',
+            f'{query}',
+            stdout=asyncio.subprocess.PIPE,
+            stderr=asyncio.subprocess.PIPE,
         )
         stdout, stderr = await proc.communicate()
         return stdout.decode().split('\n')[0]
@@ -70,15 +75,17 @@ async def yt_stream(query, only_audio=True):
     stdout, stderr = await proc.communicate()
     return stdout.decode().split('\n')[0]
 
+
 def check_value(data, val):
     if len(data) > 0:
-          if val in data and data[val] == 1:
-              is_playing = True
-          else:
-              is_playing = False
+        if val in data and data[val] == 1:
+            is_playing = True
+        else:
+            is_playing = False
     else:
-      is_playing = False
+        is_playing = False
     return is_playing
+
 
 def transcode(filename: str, chat_id: int):
     ffmpeg.input(filename).output(
@@ -91,12 +98,14 @@ def transcode(filename: str, chat_id: int):
     ).overwrite_output().run()
     os.remove(filename)
 
+
 def download(idd, chat_id):
     info_dict = ydl.extract_info(idd, download=False)
     audio_file = ydl.prepare_filename(info_dict)
     ydl.process_info(info_dict)
     os.rename(audio_file, f"input{chat_id}.webm")
     return info_dict
+
 
 @bot.on_message(filters.command("vcs"))
 async def joinvc(_, m):
@@ -110,6 +119,7 @@ async def joinvc(_, m):
         print(traceback.print_exc())
         await m.reply(e)
 
+
 @bot.on_message(filters.command("stop"))
 async def joinvc(_, m):
     if str(m.chat.id) not in AuthChats:
@@ -117,6 +127,7 @@ async def joinvc(_, m):
     if await is_admin(m.chat.id, m.from_user.id) == False:
         return
     await vc.leave_group_call(m.chat.id)
+
 
 @bot.on_message(filters.command("skip"))
 async def skipvc(_, m):
@@ -138,6 +149,7 @@ async def skipvc(_, m):
     QUEUE[m.chat.id].pop(0)
     await bot.send_photo(m.chat.id, f"https://i.ytimg.com/vi/{ytdetails['id']}/maxresdefault.jpg", caption=f"Playing {title}\nDuration: {duration}")
 
+
 @bot.on_message(filters.command("yt"))
 async def ytvc(_, m):
     if str(m.chat.id) not in AuthChats:
@@ -155,6 +167,7 @@ async def ytvc(_, m):
         else:
             return
     await m.reply_text("accha")
+
 
 @bot.on_message(filters.command("play"))
 async def playvc(_, m):
@@ -188,6 +201,7 @@ async def playvc(_, m):
         print(m.chat.id, text[1], m.from_user.id)
         add_to_queue(m.chat.id, text[1], m.from_user.id)
         await m.reply("added to queue")
+
 
 @vc.on_stream_end()
 async def streamhandler(vc: PyTgCalls, update: Update):
