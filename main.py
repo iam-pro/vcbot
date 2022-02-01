@@ -20,60 +20,64 @@ queue = []
 
 
 async def is_admin(chat_id, user):
-    return user in [x.user.id async for x in bot.iter_chat_members(chat_id, filter="administrators") if x.can_manage_voice_chats]
+    return user in [
+        x.user.id
+        async for x in bot.iter_chat_members(chat_id, filter="administrators")
+        if x.can_manage_voice_chats
+    ]
 
 
 async def yt_stream(query, only_audio=True):
     if only_audio:
         if re.search("youtu", query):
             proc = await asyncio.create_subprocess_exec(
-                'yt-dlp',
-                '-g',
-                '-f',
-                'bestaudio/best',
-                f'{query}',
+                "yt-dlp",
+                "-g",
+                "-f",
+                "bestaudio/best",
+                f"{query}",
                 stdout=asyncio.subprocess.PIPE,
                 stderr=asyncio.subprocess.PIPE,
             )
             stdout, stderr = await proc.communicate()
-            return stdout.decode().split('\n')[0]
+            return stdout.decode().split("\n")[0]
         else:
             proc = await asyncio.create_subprocess_exec(
-                'yt-dlp',
-                '-g',
-                '-f',
+                "yt-dlp",
+                "-g",
+                "-f",
                 # CHANGE THIS BASED ON WHAT YOU WANT
-                'best[height<=?720][width<=?1280]',
-                f'ytsearch1:{query}',
+                "best[height<=?720][width<=?1280]",
+                f"ytsearch1:{query}",
                 stdout=asyncio.subprocess.PIPE,
                 stderr=asyncio.subprocess.PIPE,
             )
             stdout, stderr = await proc.communicate()
-            return stdout.decode().split('\n')[0]
+            return stdout.decode().split("\n")[0]
     if re.search("youtu", query):
         proc = await asyncio.create_subprocess_exec(
-            'yt-dlp',
-            '-g',
-            '-f',
-            'best[height<=?720][width<=?1280]',
-            f'{query}',
+            "yt-dlp",
+            "-g",
+            "-f",
+            "best[height<=?720][width<=?1280]",
+            f"{query}",
             stdout=asyncio.subprocess.PIPE,
             stderr=asyncio.subprocess.PIPE,
         )
         stdout, stderr = await proc.communicate()
-        return stdout.decode().split('\n')[0]
+        return stdout.decode().split("\n")[0]
     proc = await asyncio.create_subprocess_exec(
-        'yt-dlp',
-        '-g',
-        '-f',
+        "yt-dlp",
+        "-g",
+        "-f",
         # CHANGE THIS BASED ON WHAT YOU WANT
-        'best[height<=?720][width<=?1280]',
-        f'ytsearch1:{query}',
+        "best[height<=?720][width<=?1280]",
+        f"ytsearch1:{query}",
         stdout=asyncio.subprocess.PIPE,
         stderr=asyncio.subprocess.PIPE,
     )
     stdout, stderr = await proc.communicate()
-    return stdout.decode().split('\n')[0]
+    return stdout.decode().split("\n")[0]
 
 
 def check_value(data, val):
@@ -142,12 +146,16 @@ async def skipvc(_, m):
     remote = await yt_stream(song)
     xx = datetime.timedelta(seconds=info_dict["duration"])
     if str(xx).startswith("0"):
-        duration = (str(xx)[2:])
+        duration = str(xx)[2:]
     else:
         duration = str(xx)
     await vc.change_stream(m.chat.id, AudioPiped(remote, HighQualityAudio()))
     QUEUE[m.chat.id].pop(0)
-    await bot.send_photo(m.chat.id, f"https://i.ytimg.com/vi/{ytdetails['id']}/maxresdefault.jpg", caption=f"Playing {title}\nDuration: {duration}")
+    await bot.send_photo(
+        m.chat.id,
+        f"https://i.ytimg.com/vi/{ytdetails['id']}/maxresdefault.jpg",
+        caption=f"Playing {title}\nDuration: {duration}",
+    )
 
 
 @bot.on_message(filters.command("yt"))
@@ -159,11 +167,16 @@ async def ytvc(_, m):
     text = m.text.split(" ", 1)
     remote = await yt_stream(text[1], only_audio=False)
     try:
-        await vc.join_group_call(m.chat.id, AudioVideoPiped(remote, HighQualityAudio(), HighQualityVideo()))
+        await vc.join_group_call(
+            m.chat.id, AudioVideoPiped(remote, HighQualityAudio(), HighQualityVideo())
+        )
     except AlreadyJoinedError:
         _check = check_value(vc._call_holder._calls, m.chat.id)
         if _check == False:
-            await vc.change_stream(m.chat.id, AudioVideoPiped(remote, HighQualityAudio(), HighQualityVideo()))
+            await vc.change_stream(
+                m.chat.id,
+                AudioVideoPiped(remote, HighQualityAudio(), HighQualityVideo()),
+            )
         else:
             return
     await m.reply_text("accha")
@@ -183,20 +196,22 @@ async def playvc(_, m):
         chat_id = m.chat.id
         remote = await yt_stream(text[1])
         title = ytdetails["title"]
-#        print(info_dict["thumbnails"])
-#        thumb = info_dict["thumbnails"][1]["url"]
+        #        print(info_dict["thumbnails"])
+        #        thumb = info_dict["thumbnails"][1]["url"]
         xx = datetime.timedelta(seconds=ytdetails["duration"])
         if str(xx).startswith("0"):
-            duration = (str(xx)[2:])
+            duration = str(xx)[2:]
         else:
             duration = str(xx)
         try:
-            await vc.join_group_call(
-                m.chat.id, AudioPiped(remote, HighQualityAudio())
-            )
+            await vc.join_group_call(m.chat.id, AudioPiped(remote, HighQualityAudio()))
         except AlreadyJoinedError:
             await vc.change_stream(m.chat.id, AudioPiped(remote, HighQualityAudio()))
-        await bot.send_photo(m.chat.id, f"https://i.ytimg.com/vi/{ytdetails['id']}/maxresdefault.jpg", caption=f"Playing: `{title}`\nDuration: `{duration}`")
+        await bot.send_photo(
+            m.chat.id,
+            f"https://i.ytimg.com/vi/{ytdetails['id']}/maxresdefault.jpg",
+            caption=f"Playing: `{title}`\nDuration: `{duration}`",
+        )
     elif _check == True:
         print(m.chat.id, text[1], m.from_user.id)
         add_to_queue(m.chat.id, text[1], m.from_user.id)
@@ -212,13 +227,18 @@ async def streamhandler(vc: PyTgCalls, update: Update):
     thumb = ytdetails["thumbnails"][1]["url"]
     xx = datetime.timedelta(seconds=ytdetails["duration"])
     if str(xx).startswith("0"):
-        duration = (str(xx)[2:])
+        duration = str(xx)[2:]
     else:
         duration = str(xx)
     msg = f"Playing {title} !"
     await vc.change_stream(update.chat_id, AudioPiped(remote, HighQualityAudio()))
     QUEUE[update.chat_id].pop(0)
-    await bot.send_photo(update.chat_id, f"https://i.ytimg.com/vi/{ytdetails['id']}/maxresdefault.jpg", caption=f"Playing: `{title}`\nDuration: `{duration}`")
+    await bot.send_photo(
+        update.chat_id,
+        f"https://i.ytimg.com/vi/{ytdetails['id']}/maxresdefault.jpg",
+        caption=f"Playing: `{title}`\nDuration: `{duration}`",
+    )
+
 
 bot.start()
 vc.start()
