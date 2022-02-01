@@ -1,17 +1,19 @@
-import traceback
-import ffmpeg
-import re
 import asyncio
 import datetime
-from pytgcalls import PyTgCalls, StreamType, idle
-from pytgcalls.types import Update
-from pytgcalls.types.input_stream import AudioPiped, AudioVideoPiped
-from pytgcalls.types.input_stream.quality import HighQualityAudio
-from pytgcalls.types.input_stream.quality import HighQualityVideo
-from pytgcalls.types.input_stream import InputStream
-from pytgcalls.exceptions import AlreadyJoinedError
-from client import *
+import re
+import traceback
 from multiprocessing import Process
+
+import ffmpeg
+from pytgcalls import PyTgCalls, StreamType, idle
+from pytgcalls.exceptions import AlreadyJoinedError
+from pytgcalls.types import Update
+from pytgcalls.types.input_stream import (AudioPiped, AudioVideoPiped,
+                                          InputStream)
+from pytgcalls.types.input_stream.quality import (HighQualityAudio,
+                                                  HighQualityVideo)
+
+from client import *
 from funcs import *
 
 vc = PyTgCalls(user)
