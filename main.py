@@ -138,7 +138,7 @@ async def skipvc(_, m):
         duration = str(xx)
     await vc.change_stream(m.chat.id, AudioPiped(remote, HighQualityAudio()))
     QUEUE[m.chat.id].pop(0)
-    await bot.send_photo(m.chat.id, f"https://i.ytimg.com/vi/{ytdetails['id']}/maxresdefault.jpg", caption=f"Playing {title}\nDuration: {duration}")
+    await bot.send_photo(m.chat.id, f"https://i.ytimg.com/vi/{ytdetails['id']}/maxresdefault.jpg", caption=f"Playing `{title}`\nDuration: `{duration}`")
 
 @bot.on_message(filters.command("yt"))
 async def ytvc(_, m):
