@@ -154,7 +154,7 @@ async def ytvc(_, m):
             await vc.change_stream(m.chat.id, AudioVideoPiped(remote, HighQualityAudio(), HighQualityVideo()))
         else:
             return
-    await m.reply_text("Okay")
+    await m.reply_text("accha")
 
 @bot.on_message(filters.command("play"))
 async def playvc(_, m):
