@@ -193,8 +193,8 @@ async def playvc(_, m):
 
 @vc.on_stream_end()
 async def streamhandler(vc: PyTgCalls, update: Update):
-    if not get_from_queue(m.chat.id):
-        return await vc.leave_group_call(m.chat.id)
+    if not get_from_queue(update.chat_id):
+        return await vc.leave_group_call(update.chat_id)
     song, from_user = get_from_queue(update.chat_id)
     ytdetails = await get_yt_dict(song)
     remote = await yt_stream(song)
