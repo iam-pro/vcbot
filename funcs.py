@@ -12,12 +12,10 @@ def add_to_queue(chat_id, song_name, from_user):
         play_at = 1
     if QUEUE.get(int(chat_id)):
         QUEUE[int(chat_id)].append(
-            [
-                {
-                    "title": song_name,
-                    "from_user": from_user,
-                }
-            ]
+            {
+                "title": song_name,
+                "from_user": from_user,
+            }
         )
     else:
         QUEUE.update(
